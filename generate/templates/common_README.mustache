@@ -2,7 +2,7 @@
 {{#apiInfo}}{{#apis}}{{#-last}}{{#hasHttpSignatureMethods}}import datetime{{/hasHttpSignatureMethods}}{{/-last}}{{/apis}}{{/apiInfo}}
 import time
 import {{{packageName}}}
-from {{{packageName}}}.rest import ApiException
+from {{{packageName}}}.exceptions import ApiException
 from pprint import pprint
 {{#apiInfo}}{{#apis}}{{#-first}}{{#operations}}{{#operation}}{{#-first}}
 {{> python_doc_auth_partial}}
@@ -10,7 +10,7 @@ from pprint import pprint
 # Enter a context with an instance of the ApiClientFactory to ensure the connection pool is closed after use
 {{#asyncio}}async {{/asyncio}}with api_client_factory:
     # Create an instance of the API class
-    api_instance = {{{packageName}}}.{{{classname}}}(api_client)
+    api_instance = api_client_factory.build({{{classname}}})
     {{#allParams}}
     {{paramName}} = {{{example}}} # {{{dataType}}} | {{{description}}}{{^required}} (optional){{/required}}{{#defaultValue}} (default to {{{.}}}){{/defaultValue}}
     {{/allParams}}
