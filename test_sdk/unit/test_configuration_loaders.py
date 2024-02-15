@@ -175,8 +175,36 @@ class TestArgsConfigurationLoader:
 
 def test_get_api_configuration_overwrites_content_in_order():
     mock_config_loader_1 = EnvironmentVariablesConfigurationLoader()
-    mock_config_loader_1.load_config = mock.MagicMock(return_value={"token_url":"1"})
+    mock_config_loader_1.load_config = mock.MagicMock(return_value={"token_url": "1"})
     mock_config_loader_2 = EnvironmentVariablesConfigurationLoader()
-    mock_config_loader_2.load_config = mock.MagicMock(return_value={"token_url":"2"})
+    mock_config_loader_2.load_config = mock.MagicMock(return_value={"token_url": "2"})
     api_config = get_api_configuration([mock_config_loader_1, mock_config_loader_2])
     assert api_config.token_url == "2"
+
+
+def test_get_api_configuration_returns_api_config_with_proxy_settings_when_proxy_address_not_None():  # noqa
+    proxy_address = "http://www.example.com"
+    mock_config_loader = EnvironmentVariablesConfigurationLoader()
+    mock_config_loader.load_config = mock.MagicMock(
+        return_value={"proxy_address": proxy_address}
+    )
+    api_config = get_api_configuration((mock_config_loader,))
+    assert api_config.proxy_config is not None
+    assert api_config.proxy_config.address == proxy_address
+
+
+def test_get_api_configuration_returns_api_config_with_proxy_address_and_username_password():  # noqa
+    proxy_address = "http://www.example.com"
+    proxy_username = "user"
+    proxy_password = "pass"
+    mock_config_loader = EnvironmentVariablesConfigurationLoader()
+    mock_config_loader.load_config = mock.MagicMock(
+        return_value={"proxy_address": proxy_address,
+                      "proxy_username": proxy_username,
+                      "proxy_password": proxy_password}
+    )
+    api_config = get_api_configuration((mock_config_loader,))
+    assert api_config.proxy_config is not None
+    assert api_config.proxy_config.address == proxy_address
+    assert api_config.proxy_config.username == proxy_username
+    assert api_config.proxy_config.password == proxy_password
