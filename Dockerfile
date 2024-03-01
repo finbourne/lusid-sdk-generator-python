@@ -39,3 +39,7 @@ RUN --mount=type=ssh \
 COPY generate/ /usr/src/generate
 COPY ./justfile /usr/src/
 COPY test_sdk /usr/src/test_sdk
+
+# sometimes poetry publish fails due to connection timeouts
+# default is 15 secs, I've increased to 120 to mitigate.
+ENV POETRY_REQUESTS_TIMEOUT=120
