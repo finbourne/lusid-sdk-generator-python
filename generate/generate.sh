@@ -95,6 +95,15 @@ do
     echo "$new_contents" > $file
 done
 
+# list all API files, and text replace. Workaround until we start using pydantic directly with OpenApi generator
+api_files=$(find $sdk_output_folder/$app_name/api -type f -maxdepth 1)
+for file in $api_files
+do
+   # replace "from pydantic import" with "from pydantic.v1 import"
+  new_contents=$(sed 's/from pydantic import/from pydantic.v1 import/' $file)
+  echo "$new_contents" > $file
+done
+
 (
     cd $sdk_output_folder;
     poetry install;
