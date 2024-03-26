@@ -46,6 +46,9 @@
         },
         "extensions/tcp_keep_alive_connector.mustache": {
             "destinationFilename": "${PACKAGE_NAME}/extensions/tcp_keep_alive_connector.py"
+        },
+        "extensions/file_access_token.mustache": {
+            "destinationFilename": "${PACKAGE_NAME}/extensions/file_access_token.py"
         }
     }
 }
