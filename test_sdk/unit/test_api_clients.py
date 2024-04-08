@@ -38,7 +38,7 @@ async def test_async_api_client_content_length():
     api_client = AsyncApiClient(config)
     mock_response = MagicMock()
     mock_response.status = "200"
-    headers = {"Content-Type": "text/plain", "Content-Length":17}
+    headers = {"Content-Type": "text/plain", "Content-Length":17, "version": 2.45}
     message = "hello world"
     mock_request = Future()
     mock_request.set_result(mock_response)
@@ -58,7 +58,7 @@ async def test_async_api_client_content_length():
 def test_sync_client_content_length():
     config = Configuration(host="https://www.lusid.com/api")
     api_client = SyncApiClient(config)
-    headers = {"Content-Type": "text/plain", "Content-Length":17}
+    headers = {"Content-Type": "text/plain", "Content-Length":17, "version": 2.45}
     message = "hello world"
 
     with patch.object(
