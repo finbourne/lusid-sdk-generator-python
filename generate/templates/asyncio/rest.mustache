@@ -106,12 +106,19 @@ class RESTClientObject:
 
         if 'Content-Type' not in headers:
             headers['Content-Type'] = 'application/json'
+        
+        stringified_headers = {}            
+        for content in headers:
+            if(isinstance(headers[content], int)):
+                stringified_headers.update({content: str(headers[content])})
+            else:
+                stringified_headers.update({content: headers[content]})
 
         args = {
             "method": method,
             "url": url,
             "timeout": timeout,
-            "headers": headers
+            "headers": stringified_headers
         }
 
         if self.proxy:
