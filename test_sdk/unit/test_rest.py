@@ -44,6 +44,11 @@ class TestAsyncRest:
             body=message,
             _preload_content=False,
         )
+
+        args, kwargs = rest_client.pool_manager.request.call_args
+        passed_headers = kwargs['headers']
+
+        assert expected_response == passed_headers
         assert expected_response == response
 
 
