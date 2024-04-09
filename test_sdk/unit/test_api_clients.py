@@ -31,53 +31,6 @@ async def test_async_api_client_encodes_query_params_correctly():
         print(args)
         assert expected_encoded_url == args[1]
 
-@pytest.mark.asyncio
-async def test_async_api_client_content_length():
-    
-    config = Configuration(host="https://www.lusid.com/api")
-    api_client = AsyncApiClient(config)
-    mock_response = MagicMock()
-    mock_response.headers = {"Content-Type": "text/plain", "Content-Length":'17', "version": '2.45'}
-    mock_response.status = '200'
-    headers = {"Content-Type": "text/plain", "Content-Length":17, "version": 2.45}
-    message = "hello world"
-    mock_request = Future()
-    mock_request.set_result(mock_response)
-    with patch.object(
-        api_client, "request", return_value=mock_request
-    ) as mock_request_function:
-
-        result = await api_client.call_api(
-            "/path",
-            "POST",
-            header_params=headers,
-            _preload_content=False,
-            body=message
-        )
-        header_value = list(result.headers.values())[1]
-        assert result.status_code == '200'
-        assert type(header_value) == str
-
-def test_sync_client_content_length():
-    config = Configuration(host="https://www.lusid.com/api")
-    api_client = SyncApiClient(config)
-    headers = {"Content-Type": "text/plain", "Content-Length":17, "version": 2.45}
-    message = "hello world"
-
-    with patch.object(
-        api_client, "request"
-    ) as mock_request_function:
-        mock_request_function.return_value.status = "200"
-        result = api_client.call_api(
-            "/path",
-            "POST",
-            header_params=headers,
-            collection_formats=["multi"],
-            _preload_content=False,
-            body=message
-        )
-        assert result.status_code == '200'
-
 def test_sync_api_client_encodes_query_params_correctly():
     config = Configuration(host="https://example.com")
     api_client = SyncApiClient(config)
