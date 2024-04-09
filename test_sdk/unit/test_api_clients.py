@@ -37,7 +37,8 @@ async def test_async_api_client_content_length():
     config = Configuration(host="https://www.lusid.com/api")
     api_client = AsyncApiClient(config)
     mock_response = MagicMock()
-    mock_response.status = "200"
+    mock_response.headers = {"Content-Type": "text/plain", "Content-Length":'17', "version": '2.45'}
+    mock_response.status = '200'
     headers = {"Content-Type": "text/plain", "Content-Length":17, "version": 2.45}
     message = "hello world"
     mock_request = Future()
@@ -53,7 +54,9 @@ async def test_async_api_client_content_length():
             _preload_content=False,
             body=message
         )
+        header_value = list(result.headers.values())[1]
         assert result.status_code == '200'
+        assert type(header_value) == str
 
 def test_sync_client_content_length():
     config = Configuration(host="https://www.lusid.com/api")

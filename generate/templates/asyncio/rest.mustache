@@ -108,8 +108,7 @@ class RESTClientObject:
             headers['Content-Type'] = 'application/json'
         
         for content in headers:
-            headers[content] = ({content: str(headers[content])})
-            
+            content = ({content: str(headers[content])})
 
         args = {
             "method": method,
