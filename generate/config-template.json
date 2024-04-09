@@ -14,6 +14,12 @@
         "identifierNamingConvention": "snake_case"
     },
     "files": {
+        "api_doc_page.mustache": {
+            "destinationFilename": "docs/apis.md"
+        },
+        "model_doc_page.mustache": {
+            "destinationFilename": "docs/models.md"
+        },
         "extensions/api_client_factory.mustache": {
             "destinationFilename": "${PACKAGE_NAME}/extensions/api_client_factory.py"
         },
