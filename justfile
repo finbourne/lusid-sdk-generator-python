@@ -6,15 +6,15 @@
 #    PACKAGE_VERSION
 #    PYPI_PACKAGE_LOCATION
 
-export PACKAGE_NAME := `echo ${PACKAGE_NAME:-lusid}`
-export PROJECT_NAME := `echo ${PROJECT_NAME:-lusid-sdk}`
+export PACKAGE_NAME := `echo ${PACKAGE_NAME:-lusid_drive}`
+export PROJECT_NAME := `echo ${PROJECT_NAME:-lusid-drive-sdk}`
 export PACKAGE_VERSION := `echo ${PACKAGE_VERSION:-2.0.0}`
 
 export PYPI_PACKAGE_LOCATION := `echo ${PYPI_PACKAGE_LOCATION:-~/.pypi/packages}`
 
 swagger_path := "./swagger.json"
 
-swagger_url := "https://fbn-prd.lusid.com/api/swagger/v0/swagger.json"
+swagger_url := "https://fbn-prd.lusid.com/drive/swagger/v0/swagger.json"
 
 get-swagger:
     echo {{swagger_url}}
@@ -24,13 +24,13 @@ build-docker-images:
     docker build -t finbourne/lusid-sdk-gen-python:latest --ssh default=$SSH_AUTH_SOCK -f Dockerfile .
 
 generate-templates:
-    envsubst < generate/config-template.json > generate/.config.json
+    export PACKAGE_NAME_SPACED=${PACKAGE_NAME//_/ } && envsubst < generate/config-template.json > generate/.config.json
     docker run \
         -v {{justfile_directory()}}/.templates:/usr/src/templates \
         finbourne/lusid-sdk-gen-python:latest -- java -jar /opt/openapi-generator/modules/openapi-generator-cli/target/openapi-generator-cli.jar author template -g python -o /usr/src/templates
 
 generate-local:
-    envsubst < generate/config-template.json > generate/.config.json
+    export PACKAGE_NAME_SPACED=${PACKAGE_NAME//_/ } && envsubst < generate/config-template.json > generate/.config.json
     docker run \
         -e JAVA_OPTS="-Dlog.level=error -Xmx6g" \
         -e PACKAGE_VERSION=${PACKAGE_VERSION} \
@@ -91,7 +91,7 @@ generate TARGET_DIR:
 generate-cicd TARGET_DIR:
     mkdir -p {{TARGET_DIR}}
     mkdir -p ./generate/.output
-    envsubst < generate/config-template.json > generate/.config.json
+    export PACKAGE_NAME_SPACED=${PACKAGE_NAME//_/ } && envsubst < generate/config-template.json > generate/.config.json
     cp ./generate/.openapi-generator-ignore ./generate/.output/.openapi-generator-ignore
 
     ./generate/generate.sh ./generate ./generate/.output {{swagger_path}} .config.json

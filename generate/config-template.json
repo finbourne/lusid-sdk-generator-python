@@ -11,7 +11,8 @@
     "gitUserId": "${GIT_USER_ID}",
     "gitRepoId": "${GIT_REPO_ID}",
     "additionalProperties": {
-        "identifierNamingConvention": "snake_case"
+        "identifierNamingConvention": "snake_case",
+        "packageNameSpaced":"${PACKAGE_NAME_SPACED}"
     },
     "files": {
         "api_doc_page.mustache": {
