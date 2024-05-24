@@ -228,3 +228,13 @@ class TestFileConfigurationLoader:
             )
             config = config_loader.load_config()
             assert "sample_token" == config["access_token"]
+
+    def test_load_config_returns_no_access_token_when_location_is_empty_string(self):
+        config_loader = FileTokenConfigurationLoader(access_token_location="")
+        config = config_loader.load_config()
+        assert config["access_token"] is None
+
+    def test_load_config_returns_no_access_token_when_location_is_None(self):
+        config_loader = FileTokenConfigurationLoader()
+        config = config_loader.load_config()
+        assert config["access_token"] is None
