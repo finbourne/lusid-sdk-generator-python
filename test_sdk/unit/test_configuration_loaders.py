@@ -3,6 +3,7 @@ from lusid.extensions import (
     SecretsFileConfigurationLoader,
     EnvironmentVariablesConfigurationLoader,
     ArgsConfigurationLoader,
+    FileTokenConfigurationLoader,
 )
 from lusid.extensions.api_client_factory import get_api_configuration
 from unittest import mock
@@ -182,6 +183,15 @@ def test_get_api_configuration_overwrites_content_in_order():
     assert api_config.token_url == "2"
 
 
+def test_get_api_configuration_does_not_overwrite_content_when_value_None():
+    mock_config_loader_1 = EnvironmentVariablesConfigurationLoader()
+    mock_config_loader_1.load_config = mock.MagicMock(return_value={"token_url": "1"})
+    mock_config_loader_2 = EnvironmentVariablesConfigurationLoader()
+    mock_config_loader_2.load_config = mock.MagicMock(return_value={"token_url": None})
+    api_config = get_api_configuration([mock_config_loader_1, mock_config_loader_2])
+    assert api_config.token_url == "1"
+
+
 def test_get_api_configuration_returns_api_config_with_proxy_settings_when_proxy_address_not_None():  # noqa
     proxy_address = "http://www.example.com"
     mock_config_loader = EnvironmentVariablesConfigurationLoader()
@@ -208,3 +218,13 @@ def test_get_api_configuration_returns_api_config_with_proxy_address_and_usernam
     assert api_config.proxy_config.address == proxy_address
     assert api_config.proxy_config.username == proxy_username
     assert api_config.proxy_config.password == proxy_password
+
+
+class TestFileConfigurationLoader:
+    def test_load_config_returns_access_token_from_file(self):
+        with mock.patch("builtins.open", mock.mock_open(read_data="sample_token")):
+            config_loader = FileTokenConfigurationLoader(
+                access_token_location="test_file"
+            )
+            config = config_loader.load_config()
+            assert "sample_token" == config["access_token"]
