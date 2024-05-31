@@ -1,4 +1,13 @@
-#!/bin/bash -e
+#!/bin/bash
+
+set -EeTuo pipefail
+
+failure() {
+    local lineno=$1
+    local msg=$2
+    echo "Failed at $lineno: $msg"
+}
+trap 'failure ${LINENO} "$BASH_COMMAND"' ERR
 
 if [[ ${#1} -eq 0 ]]; then
     echo

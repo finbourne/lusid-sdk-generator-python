@@ -15,6 +15,7 @@ export PYPI_PACKAGE_LOCATION := `echo ${PYPI_PACKAGE_LOCATION:-~/.pypi/packages}
 swagger_path := "./swagger.json"
 
 swagger_url := "https://fbn-prd.lusid.com/api/swagger/v0/swagger.json"
+fix_notifications_v2_sdk_flag := "--fix-notifications-v2-sdk"
 
 get-swagger:
     echo {{swagger_url}}
@@ -29,7 +30,12 @@ generate-templates:
         -v {{justfile_directory()}}/.templates:/usr/src/templates \
         finbourne/lusid-sdk-gen-python:latest -- java -jar /opt/openapi-generator/modules/openapi-generator-cli/target/openapi-generator-cli.jar author template -g python -o /usr/src/templates
 
-generate-local:
+generate-local FLAG="":
+    # check if the notifications fix flag has been set
+    if [[ "{{FLAG}}" != "{{fix_notifications_v2_sdk_flag}}" && -n "{{FLAG}}" ]]; then echo "unexpected flag '{{FLAG}}' ... did you mean '{{fix_notifications_v2_sdk_flag}}'?"; fi
+    
+    # generate the sdk
+    rm -r {{justfile_directory()}}/generate/.output || true # ensure a clean output dir before starting
     envsubst < generate/config-template.json > generate/.config.json
     docker run \
         -e JAVA_OPTS="-Dlog.level=error -Xmx6g" \
@@ -39,6 +45,9 @@ generate-local:
         -v {{justfile_directory()}}/{{swagger_path}}:/tmp/swagger.json \
         finbourne/lusid-sdk-gen-python:latest -- ./generate/generate.sh ./generate ./generate/.output /tmp/swagger.json .config.json
     rm -f generate/.output/.openapi-generator-ignore
+    
+    # try to fix the notifications sdk if flag set
+    if [[ "{{FLAG}}" == "{{fix_notifications_v2_sdk_flag}}" ]]; then just fix-notifications-v2-sdk; fi
 
 link-tests:
     mkdir -p {{justfile_directory()}}/generate/.output/sdk/test/
@@ -77,8 +86,8 @@ test-only:
         -w /usr/src/sdk \
         python:3.11 bash -c "pip install poetry; poetry install; poetry run pytest"
 
-generate TARGET_DIR:
-    @just generate-local
+generate TARGET_DIR FLAG="":
+    @just generate-local {{FLAG}}
     
     # need to remove the created content before copying over the top of it.
     # this prevents deleted content from hanging around indefinitely.
@@ -88,7 +97,10 @@ generate TARGET_DIR:
     cp -R generate/.output/* {{TARGET_DIR}}
 
 # Generate an SDK from a swagger.json and copy the output to the TARGET_DIR
-generate-cicd TARGET_DIR:
+generate-cicd TARGET_DIR FLAG="":
+    # check if the notifications fix flag has been set
+    if [[ "{{FLAG}}" != "{{fix_notifications_v2_sdk_flag}}" && -n "{{FLAG}}" ]]; then echo "unexpected flag '{{FLAG}}' ... did you mean '{{fix_notifications_v2_sdk_flag}}'?"; fi
+    
     mkdir -p {{TARGET_DIR}}
     mkdir -p ./generate/.output
     envsubst < generate/config-template.json > generate/.config.json
@@ -96,6 +108,9 @@ generate-cicd TARGET_DIR:
 
     ./generate/generate.sh ./generate ./generate/.output {{swagger_path}} .config.json
     rm -f generate/.output/.openapi-generator-ignore
+
+    # try to fix the notifications sdk if flag set
+    if [[ "{{FLAG}}" == "{{fix_notifications_v2_sdk_flag}}" ]]; then just fix-notifications-v2-sdk; fi
 
     # need to remove the created content before copying over the top of it.
     # this prevents deleted content from hanging around indefinitely.
@@ -135,14 +150,18 @@ publish-to SRC_DIR OUT_DIR:
     poetry build
     cp dist/* {{OUT_DIR}}/
 
-generate-and-publish TARGET_DIR:
-    @just generate {{TARGET_DIR}}
+generate-and-publish TARGET_DIR FLAG="":
+    @just generate {{TARGET_DIR}} {{FLAG}}
     @just publish-only
 
-generate-and-publish-local:
-    @just generate-local
+generate-and-publish-local FLAG="":
+    @just generate-local {{FLAG}}
     @just publish-only-local
 
-generate-and-publish-cicd OUT_DIR:
-    @just generate-cicd {{OUT_DIR}}
+generate-and-publish-cicd OUT_DIR FLAG="":
+    @just generate-cicd {{OUT_DIR}} {{FLAG}}
     @just publish-cicd {{OUT_DIR}}
+
+fix-notifications-v2-sdk:
+    bash {{justfile_directory()}}/generate/fix-notifications-v2-sdk.sh {{justfile_directory()}}
+
