@@ -1,11 +1,11 @@
 import json
-from lusid.extensions import (
+from TO_BE_REPLACED.extensions import (
     SecretsFileConfigurationLoader,
     EnvironmentVariablesConfigurationLoader,
     ArgsConfigurationLoader,
     FileTokenConfigurationLoader,
 )
-from lusid.extensions.api_client_factory import get_api_configuration
+from TO_BE_REPLACED.extensions.api_client_factory import get_api_configuration
 from unittest import mock
 
 
@@ -29,7 +29,7 @@ class TestSecretsFileConfigurationLoader:
         secrets_file_contents = {
             "api": {
                 "tokenUrl": "sample_tokenUrl",
-                "lusidUrl": "sample_apiUrl",
+                "TO_BE_REPLACEDUrl": "sample_apiUrl",
                 "username": "sample_username",
                 "password": "sample_password",
                 "clientId": "sample_clientId",
@@ -83,9 +83,10 @@ class TestSecretsFileConfigurationLoader:
 
 class TestEnvironmentVariablesConfigurationLoader:
     def test_load_config_loads_api_config(self):
+        url_env_var="FBN_TO_BE_REPLACED_API_URL".upper()
         environment_variables = {
             "FBN_TOKEN_URL": "sample_tokenUrl",
-            "FBN_LUSID_API_URL": "sample_apiUrl",
+            url_env_var: "sample_apiUrl",
             "FBN_USERNAME": "sample_username",
             "FBN_PASSWORD": "sample_password",
             "FBN_CLIENT_ID": "sample_clientId",
@@ -111,7 +112,7 @@ class TestEnvironmentVariablesConfigurationLoader:
         with mock.patch.dict("os.environ", environment_variables, clear=True):
             config_loader = EnvironmentVariablesConfigurationLoader()
             result = config_loader.load_config()
-            assert expected_config == result
+            assert result == expected_config
 
     def test_load_config_loads_proxy_config(self):
         environment_variables = {

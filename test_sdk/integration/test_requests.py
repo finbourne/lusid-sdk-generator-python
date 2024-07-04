@@ -1,9 +1,9 @@
 from __future__ import annotations
 import http.server
-import lusid.configuration
+import TO_BE_REPLACED.configuration
 import pytest
 import threading
-from lusid import ApiClient
+from TO_BE_REPLACED import ApiClient
 import typing
 
 
@@ -45,7 +45,7 @@ def mock_server(
 async def test_async_client_can_send_requests_with_plain_text_bodies(
     mock_server: typing.List[str],
 ) -> None:
-    api_client = lusid.ApiClient()
+    api_client = TO_BE_REPLACED.ApiClient()
     headers = {"Content-Type": "text/plain"}
     message = "hello world"
     await api_client.request(

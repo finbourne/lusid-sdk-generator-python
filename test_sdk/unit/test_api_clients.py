@@ -1,6 +1,6 @@
-from lusid.extensions.api_client import SyncApiClient
-from lusid.configuration import Configuration
-from lusid.api_client import ApiClient as AsyncApiClient
+from TO_BE_REPLACED.extensions.api_client import SyncApiClient
+from TO_BE_REPLACED.configuration import Configuration
+from TO_BE_REPLACED.api_client import ApiClient as AsyncApiClient
 import pytest
 from unittest.mock import MagicMock, patch
 from asyncio import Future

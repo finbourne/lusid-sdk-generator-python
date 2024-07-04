@@ -1,4 +1,13 @@
-#!/bin/bash -e
+#!/bin/bash
+
+set -EeTuo pipefail
+
+failure() {
+    local lineno=$1
+    local msg=$2
+    echo "Failed at $lineno: $msg"
+}
+trap 'failure ${LINENO} "$BASH_COMMAND"' ERR
 
 if [[ ${#1} -eq 0 ]]; then
     echo
@@ -23,6 +32,7 @@ output_folder=$2
 swagger_file=$3
 config_file_name=$4
 sdk_output_folder=$output_folder/sdk
+JAVA_OPTS=${JAVA_OPTS:--Dlog.level=info}
 
 if [[ -z $config_file_name || ! -f $gen_root/$config_file_name ]] ; then
     echo "[INFO] '$config_file_name' not found, using default config.json"

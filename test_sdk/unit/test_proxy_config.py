@@ -1,6 +1,6 @@
 import pytest
 
-from lusid.extensions.proxy_config import ProxyConfig
+from TO_BE_REPLACED.extensions.proxy_config import ProxyConfig
 
 
 class TestProxyConfig:

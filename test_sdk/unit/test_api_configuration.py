@@ -1,6 +1,6 @@
 from unittest.mock import patch
-from lusid.extensions.proxy_config import ProxyConfig
-from lusid.extensions.api_configuration import ApiConfiguration
+from TO_BE_REPLACED.extensions.proxy_config import ProxyConfig
+from TO_BE_REPLACED.extensions.api_configuration import ApiConfiguration
 import pytest
 
 
@@ -39,7 +39,7 @@ def test_get_access_token_with_OIDC_params_returns_refreshing_token():
         token_url="fake_url",
     )
     with patch(
-        "lusid.extensions.api_configuration.RefreshingToken"
+        "TO_BE_REPLACED.extensions.api_configuration.RefreshingToken"
     ) as mock_refreshing_token:
         config.get_access_token()
         mock_refreshing_token.assert_called_once_with(

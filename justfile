@@ -12,6 +12,16 @@ export PACKAGE_VERSION := `echo ${PACKAGE_VERSION:-2.0.0}`
 
 export PYPI_PACKAGE_LOCATION := `echo ${PYPI_PACKAGE_LOCATION:-~/.pypi/packages}`
 
+# needed for tests
+export FBN_ACCESS_TOKEN := `echo ${FBN_ACCESS_TOKEN:-access-token}`
+export FBN_TOKEN_URL := `echo ${FBN_TOKEN_URL:-https://lusid.com}`
+export FBN_USERNAME := `echo ${FBN_USERNAME:-username}`
+export FBN_PASSWORD := `echo ${FBN_PASSWORD:-password}`
+export FBN_CLIENT_ID := `echo ${FBN_CLIENT_ID:-client-id}`
+export FBN_CLIENT_SECRET := `echo ${FBN_CLIENT_SECRET:-client-secret}`
+export TEST_API_MODULE := `echo ${TEST_API_MODULE:-api.application_metadata_api}`
+export TEST_API := `echo ${TEST_API:-ApplicationMetadataApii}`
+
 swagger_path := "./swagger.json"
 
 swagger_url := "https://fbn-prd.lusid.com/api/swagger/v0/swagger.json"
@@ -30,6 +40,8 @@ generate-templates:
         finbourne/lusid-sdk-gen-python:latest -- java -jar /opt/openapi-generator/modules/openapi-generator-cli/target/openapi-generator-cli.jar author template -g python -o /usr/src/templates
 
 generate-local:
+    # ensure a clean output dir before starting
+    rm -r {{justfile_directory()}}/generate/.output || true 
     envsubst < generate/config-template.json > generate/.config.json
     docker run \
         -e JAVA_OPTS="-Dlog.level=error -Xmx6g" \
@@ -40,29 +52,49 @@ generate-local:
         finbourne/lusid-sdk-gen-python:latest -- ./generate/generate.sh ./generate ./generate/.output /tmp/swagger.json .config.json
     rm -f generate/.output/.openapi-generator-ignore
 
-link-tests:
+add-tests:
     mkdir -p {{justfile_directory()}}/generate/.output/sdk/test/
     rm -rf {{justfile_directory()}}/generate/.output/sdk/test/*
-    ln -s {{justfile_directory()}}/test_sdk/* {{justfile_directory()}}/generate/.output/sdk/test 
+    cp -R {{justfile_directory()}}/test_sdk/* {{justfile_directory()}}/generate/.output/sdk/test
+
+    # these test files have been copied from the lusid sdk tests
+    # rename to match values for the sdk being tested
+    find {{justfile_directory()}}/generate/.output/sdk/test -type f -exec sed -i -e "s/TO_BE_REPLACED/${PACKAGE_NAME}/g" {} \;
+
+    # note these values won't work for the horizon sdk
+    # (it doesn't have this api)
+    find {{justfile_directory()}}/generate/.output/sdk/test -type f -exec sed -i -e "s/TEST_API_MODULE/${TEST_API_MODULE}/g" {} \;
+    find {{justfile_directory()}}/generate/.output/sdk/test -type f -exec sed -i -e "s/TEST_API/${TEST_API}/g" {} \;
 
 link-tests-cicd TARGET_DIR:
     mkdir -p {{TARGET_DIR}}/sdk/test/
     rm -rf {{TARGET_DIR}}/sdk/test/*
     ln -s {{justfile_directory()}}/test_sdk/* {{TARGET_DIR}}/sdk/test
+
+    # these test files have been copied from the lusid sdk tests
+    # rename to match values for the sdk being tested
+    find {{justfile_directory()}}/test_sdk -type f -exec sed -i -e "s/TO_BE_REPLACED/${PLACEHOLDER_VALUE_FOR_TESTS}/g" {} \;
+    find {{justfile_directory()}}/test_sdk -type f -exec sed -i -e "s/TEST_API_MODULE/${TEST_API_MODULE}/g" {} \;
+    find {{justfile_directory()}}/test_sdk -type f -exec sed -i -e "s/TEST_API/${TEST_API}/g" {} \;
  
-test-local:
+setup-test-local:
     @just generate-local
-    @just link-tests
+    @just add-tests
+    echo "{\"api\":{\"personalAccessToken\":\"$FBN_ACCESS_TOKEN\",\"tokenUrl\":\"$FBN_TOKEN_URL\",\"username\":\"$FBN_USERNAME\",\"password\":\"$FBN_PASSWORD\",\"clientId\":\"$FBN_CLIENT_ID\",\"clientSecret\":\"$FBN_CLIENT_SECRET\",\"apiUrl\":\"NOT_USED\"}}" > {{justfile_directory()}}/generate/.output/sdk/secrets.json
+    cp {{justfile_directory()}}/generate/.output/sdk/secrets.json {{justfile_directory()}}/generate/.output/sdk/secrets-pat.json
+
+test-local:
+    @just setup-test-local
     cd {{justfile_directory()}}/generate/.output/sdk && poetry install && poetry run pytest test
 
 test-cicd TARGET_DIR:
     @just link-tests-cicd {{TARGET_DIR}}
-    cd {{TARGET_DIR}}/sdk && poetry install && poetry run pytest test --ignore=test/integration
+    echo "{\"api\":{\"personalAccessToken\":\"$FBN_ACCESS_TOKEN\",\"tokenUrl\":\"$FBN_TOKEN_URL\",\"username\":\"$FBN_USERNAME\",\"password\":\"$FBN_PASSWORD\",\"clientId\":\"$FBN_CLIENT_ID\",\"clientSecret\":\"$FBN_CLIENT_SECRET\",\"apiUrl\":\"NOT_USED\"}}" > {{TARGET_DIR}}/sdk/secrets.json
+    cp {{TARGET_DIR}}/sdk/secrets.json {{TARGET_DIR}}/sdk/secrets-pat.json
+    cd {{TARGET_DIR}}/sdk && poetry install && poetry run pytest test
 
-test-only:
-    mkdir -p {{justfile_directory()}}/generate/.output/sdk/test/
-    cp -r {{justfile_directory()}}/test_sdk/* {{justfile_directory()}}/generate/.output/sdk/test 
-
+test-local-in-docker:
+    @just setup-test-local
     docker run \
         -t \
         -e FBN_TOKEN_URL=${FBN_TOKEN_URL} \
@@ -71,11 +103,10 @@ test-only:
         -e FBN_CLIENT_ID=${FBN_CLIENT_ID} \
         -e FBN_CLIENT_SECRET=${FBN_CLIENT_SECRET} \
         -e FBN_LUSID_API_URL=${FBN_LUSID_API_URL} \
-        -e FBN_APP_NAME=${FBN_APP_NAME} \
         -e FBN_ACCESS_TOKEN=${FBN_ACCESS_TOKEN} \
         -v {{justfile_directory()}}/generate/.output/sdk:/usr/src/sdk/ \
         -w /usr/src/sdk \
-        python:3.11 bash -c "pip install poetry; poetry install; poetry run pytest"
+        python:3.11 bash -c "pip install poetry && poetry install && poetry run pytest"
 
 generate TARGET_DIR:
     @just generate-local

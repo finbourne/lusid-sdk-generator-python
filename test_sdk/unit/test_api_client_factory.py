@@ -1,14 +1,14 @@
 from aiohttp import ClientSession, TCPConnector, TraceConfig
-from lusid import SyncApiClientFactory, ApiClientFactory
-from lusid.api_client import ApiClient as AsyncApiClient
-from lusid.extensions.api_client import SyncApiClient
-from lusid.extensions.api_client_factory import set_additional_api_client_headers
-from lusid.configuration import Configuration
+from TO_BE_REPLACED import SyncApiClientFactory, ApiClientFactory
+from TO_BE_REPLACED.api_client import ApiClient as AsyncApiClient
+from TO_BE_REPLACED.extensions.api_client import SyncApiClient
+from TO_BE_REPLACED.extensions.api_client_factory import set_additional_api_client_headers
+from TO_BE_REPLACED.configuration import Configuration
 from unittest.mock import MagicMock, patch
-from lusid.api.application_metadata_api import ApplicationMetadataApi
-from lusid.extensions.api_configuration import ApiConfiguration
-from lusid.extensions.socket_keep_alive import keep_alive_socket_options
-from lusid.extensions.tcp_keep_alive_connector import (
+from TO_BE_REPLACED.TEST_API_MODULE import TEST_API as TestApi
+from TO_BE_REPLACED.extensions.api_configuration import ApiConfiguration
+from TO_BE_REPLACED.extensions.socket_keep_alive import keep_alive_socket_options
+from TO_BE_REPLACED.extensions.tcp_keep_alive_connector import (
     TCPKeepAliveHTTPSConnectionPool,
     TCPKeepAliveHTTPConnectionPool,
 )
@@ -19,7 +19,7 @@ import pytest_asyncio
 @pytest.fixture
 def patch_get_access_token():
     with patch(
-        "lusid.extensions.api_client_builder._get_access_token",
+        "TO_BE_REPLACED.extensions.api_client_builder._get_access_token",
         return_value="fake_token",
     ):
         yield
@@ -70,16 +70,16 @@ class TestSyncApiClientFactory:
         api_client_config_mock = MagicMock(spec=ApiConfiguration)
         api_client_config_mock.build_api_client_config.return_value = Configuration()
         with patch(
-            "lusid.extensions.api_client_factory.get_api_configuration"
+            "TO_BE_REPLACED.extensions.api_client_factory.get_api_configuration"
         ) as get_api_configuration_mock:
             with patch(
-                "lusid.extensions.api_client_factory.set_additional_api_client_headers"
+                "TO_BE_REPLACED.extensions.api_client_factory.set_additional_api_client_headers"
             ) as set_additional_api_client_headers_mock:
                 get_api_configuration_mock.return_value = api_client_config_mock
 
                 api_client_factory = SyncApiClientFactory(config_loaders=[])
         with api_client_factory:
-            instance = api_client_factory.build(ApplicationMetadataApi)
+            instance = api_client_factory.build(TestApi)
         get_api_configuration_mock.assert_called_once_with(config_loaders=[])
         api_client_config_mock.build_api_client_config.assert_called_once_with(
             tcp_keep_alive=True,
@@ -99,14 +99,14 @@ class TestSyncApiClientFactory:
         api_client_config_mock = MagicMock(spec=ApiConfiguration)
         api_client_config_mock.build_api_client_config.return_value = Configuration()
         with patch(
-            "lusid.extensions.api_client_factory.get_api_configuration"
+            "TO_BE_REPLACED.extensions.api_client_factory.get_api_configuration"
         ) as get_api_configuration_mock:
             get_api_configuration_mock.return_value = api_client_config_mock
             api_client_factory = SyncApiClientFactory(
                 config_loaders=[], socket_options=socket_options
             )
         with api_client_factory:
-            instance = api_client_factory.build(ApplicationMetadataApi)
+            instance = api_client_factory.build(TestApi)
         get_api_configuration_mock.assert_called_once_with(config_loaders=[])
         api_client_config_mock.build_api_client_config.assert_called_once_with(
             tcp_keep_alive=True,
@@ -128,16 +128,16 @@ class TestAsyncApiClientFactory:
         api_client_config_mock = MagicMock(spec=ApiConfiguration)
         api_client_config_mock.build_api_client_config.return_value = Configuration()
         with patch(
-            "lusid.extensions.api_client_factory.get_api_configuration"
+            "TO_BE_REPLACED.extensions.api_client_factory.get_api_configuration"
         ) as get_api_configuration_mock:
             with patch(
-                "lusid.extensions.api_client_factory.set_additional_api_client_headers"
+                "TO_BE_REPLACED.extensions.api_client_factory.set_additional_api_client_headers"
             ) as set_additional_api_client_headers_mock:
                 get_api_configuration_mock.return_value = api_client_config_mock
 
                 api_client_factory = ApiClientFactory(config_loaders=[])
         async with api_client_factory:
-            instance = api_client_factory.build(ApplicationMetadataApi)
+            instance = api_client_factory.build(TestApi)
         get_api_configuration_mock.assert_called_once_with(config_loaders=[])
         api_client_config_mock.build_api_client_config.assert_called_once_with(
             tcp_keep_alive=True,
@@ -160,10 +160,10 @@ class TestAsyncApiClientFactory:
         api_client_config_mock = MagicMock(spec=ApiConfiguration)
         api_client_config_mock.build_api_client_config.return_value = Configuration()
         with patch(
-            "lusid.extensions.api_client_factory.get_api_configuration"
+            "TO_BE_REPLACED.extensions.api_client_factory.get_api_configuration"
         ) as get_api_configuration_mock:
             with patch(
-                "lusid.extensions.api_client_factory.TcpKeepAliveConnector"
+                "TO_BE_REPLACED.extensions.api_client_factory.TcpKeepAliveConnector"
             ) as connector_mock:
                 get_api_configuration_mock.return_value = api_client_config_mock
                 api_client_factory = ApiClientFactory(
@@ -172,7 +172,7 @@ class TestAsyncApiClientFactory:
                     tcp_keep_alive=True,
                 )
         async with api_client_factory:
-            api_instance = api_client_factory.build(ApplicationMetadataApi)
+            api_instance = api_client_factory.build(TestApi)
         connector_mock.assert_called_once_with(
             connector=base_connector, socket_options=keep_alive_socket_options()
         )
@@ -189,21 +189,21 @@ class TestAsyncApiClientFactory:
         api_client_config_mock = MagicMock(spec=ApiConfiguration)
         api_client_config_mock.build_api_client_config.return_value = Configuration()
         with patch(
-            "lusid.extensions.api_client_factory.get_api_configuration"
+            "TO_BE_REPLACED.extensions.api_client_factory.get_api_configuration"
         ) as get_api_configuration_mock:
             get_api_configuration_mock.return_value = api_client_config_mock
             with patch(
-                "lusid.extensions.api_client_factory.TcpKeepAliveConnector"
+                "TO_BE_REPLACED.extensions.api_client_factory.TcpKeepAliveConnector"
             ) as connector_mock:
                 with patch(
-                    "lusid.extensions.api_client_factory.ApiClient",
+                    "TO_BE_REPLACED.extensions.api_client_factory.ApiClient",
                 ) as api_client_mock:
                     api_client_mock.return_value = api_client
                     api_client_factory = ApiClientFactory(
                         config_loaders=[], tcp_keep_alive=True
                     )
         async with api_client_factory:
-            api_instance = api_client_factory.build(ApplicationMetadataApi)
+            api_instance = api_client_factory.build(TestApi)
         connector_mock.assert_called_once_with(
             connector=base_connector, socket_options=keep_alive_socket_options()
         )
@@ -220,17 +220,17 @@ class TestAsyncApiClientFactory:
         api_client_config_mock = MagicMock(spec=ApiConfiguration)
         api_client_config_mock.build_api_client_config.return_value = Configuration()
         with patch(
-            "lusid.extensions.api_client_factory.get_api_configuration"
+            "TO_BE_REPLACED.extensions.api_client_factory.get_api_configuration"
         ) as get_api_configuration_mock:
             get_api_configuration_mock.return_value = api_client_config_mock
             with patch(
-                "lusid.extensions.api_client_factory.TcpKeepAliveConnector"
+                "TO_BE_REPLACED.extensions.api_client_factory.TcpKeepAliveConnector"
             ) as connector_mock:
                 api_client_factory = ApiClientFactory(
                     config_loaders=[], socket_options=socket_options
                 )
         async with api_client_factory:
-            api_instance = api_client_factory.build(ApplicationMetadataApi)
+            api_instance = api_client_factory.build(TestApi)
         args, kwargs = connector_mock.call_args
         assert socket_options == kwargs["socket_options"]
         assert (
@@ -246,11 +246,11 @@ class TestAsyncApiClientFactory:
         api_client_config_mock = MagicMock(spec=ApiConfiguration)
         api_client_config_mock.build_api_client_config.return_value = Configuration()
         with patch(
-            "lusid.extensions.api_client_factory.get_api_configuration"
+            "TO_BE_REPLACED.extensions.api_client_factory.get_api_configuration"
         ) as get_api_configuration_mock:
             get_api_configuration_mock.return_value = api_client_config_mock
             with patch(
-                "lusid.extensions.api_client_factory.ClientSession"
+                "TO_BE_REPLACED.extensions.api_client_factory.ClientSession"
             ) as client_session_mock:
                 ApiClientFactory(config_loaders=[], trace_configs=trace_configs)
         args, kwargs = client_session_mock.call_args
@@ -263,11 +263,11 @@ class TestAsyncApiClientFactory:
         api_client_config_mock = MagicMock(spec=ApiConfiguration)
         api_client_config_mock.build_api_client_config.return_value = Configuration()
         with patch(
-            "lusid.extensions.api_client_factory.get_api_configuration"
+            "TO_BE_REPLACED.extensions.api_client_factory.get_api_configuration"
         ) as get_api_configuration_mock:
             get_api_configuration_mock.return_value = api_client_config_mock
             with patch(
-                "lusid.extensions.api_client_factory.ClientSession"
+                "TO_BE_REPLACED.extensions.api_client_factory.ClientSession"
             ) as client_session_mock:
                 ApiClientFactory(config_loaders=[], client_session=client_session_mock)
         args, kwargs = client_session_mock.call_args
@@ -282,18 +282,18 @@ class TestAsyncApiClientFactory:
         api_client_config_mock = MagicMock(spec=ApiConfiguration)
         api_client_config_mock.build_api_client_config.return_value = Configuration()
         with patch(
-            "lusid.extensions.api_client_factory.get_api_configuration"
+            "TO_BE_REPLACED.extensions.api_client_factory.get_api_configuration"
         ) as get_api_configuration_mock:
             get_api_configuration_mock.return_value = api_client_config_mock
             with patch(
-                    "lusid.extensions.api_client_factory.ApiClient",
+                    "TO_BE_REPLACED.extensions.api_client_factory.ApiClient",
                 ) as api_client_mock:
                     api_client_mock.return_value = api_client
                     api_client_factory = ApiClientFactory(
                         config_loaders=[], tcp_keep_alive=True, client_session=client_session
                     )
         async with api_client_factory:
-            api_instance = api_client_factory.build(ApplicationMetadataApi)
+            api_instance = api_client_factory.build(TestApi)
         
         assert (
             False
@@ -306,18 +306,18 @@ class TestAsyncApiClientFactory:
         api_client_config_mock = MagicMock(spec=ApiConfiguration)
         api_client_config_mock.build_api_client_config.return_value = Configuration()
         with patch(
-            "lusid.extensions.api_client_factory.get_api_configuration"
+            "TO_BE_REPLACED.extensions.api_client_factory.get_api_configuration"
         ) as get_api_configuration_mock:
             get_api_configuration_mock.return_value = api_client_config_mock
             with patch(
-                    "lusid.extensions.api_client_factory.ApiClient",
+                    "TO_BE_REPLACED.extensions.api_client_factory.ApiClient",
                 ) as api_client_mock:
                     api_client_mock.return_value = api_client
                     api_client_factory = ApiClientFactory(
                         config_loaders=[], tcp_keep_alive=True
                     )
         async with api_client_factory:
-            api_instance = api_client_factory.build(ApplicationMetadataApi)
+            api_instance = api_client_factory.build(TestApi)
        
         assert (
             True

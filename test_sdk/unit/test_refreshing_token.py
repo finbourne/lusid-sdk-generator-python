@@ -1,12 +1,12 @@
 from threading import Thread
 from unittest.mock import MagicMock, patch, ANY
-from lusid.extensions.configuration_loaders import (
+from TO_BE_REPLACED.extensions.configuration_loaders import (
     get_api_configuration,
     EnvironmentVariablesConfigurationLoader,
 )
-from lusid.extensions.refreshing_token import RefreshingToken
+from TO_BE_REPLACED.extensions.refreshing_token import RefreshingToken
 from time import sleep, time
-from lusid.extensions.proxy_config import ProxyConfig
+from TO_BE_REPLACED.extensions.proxy_config import ProxyConfig
 import pytest
 from datetime import datetime, timedelta
 

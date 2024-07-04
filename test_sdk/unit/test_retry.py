@@ -1,10 +1,10 @@
 from unittest import mock
-from lusid.extensions.retry import RetryingRestWrapper, RetryingRestWrapperAsync
-from lusid.extensions.rest import RESTClientObject
-from lusid.rest import RESTClientObject as AsyncRestClientObject
-from lusid.configuration import Configuration
-from lusid import ApiException
-from lusid.rest import RESTResponse
+from TO_BE_REPLACED.extensions.retry import RetryingRestWrapper, RetryingRestWrapperAsync
+from TO_BE_REPLACED.extensions.rest import RESTClientObject
+from TO_BE_REPLACED.rest import RESTClientObject as AsyncRestClientObject
+from TO_BE_REPLACED.configuration import Configuration
+from TO_BE_REPLACED import ApiException
+from TO_BE_REPLACED.rest import RESTResponse
 import pytest
 
 

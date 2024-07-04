@@ -1,7 +1,7 @@
 from unittest.mock import AsyncMock, MagicMock
 import aiohttp
-import lusid.extensions.rest
-import lusid.rest
+import TO_BE_REPLACED.extensions.rest
+import TO_BE_REPLACED.rest
 import pytest
 import urllib3
 
@@ -11,7 +11,7 @@ class TestAsyncRest:
     async def test_request_with_plaintext_content_type_calls_req_with_str_data_param(
         self,
     ):
-        rest_client = lusid.rest.RESTClientObject(lusid.Configuration.get_default())
+        rest_client = TO_BE_REPLACED.rest.RESTClientObject(TO_BE_REPLACED.Configuration.get_default())
         rest_client.pool_manager = AsyncMock(aiohttp.ClientSession)
         expected_response = "response"
         rest_client.pool_manager.request = AsyncMock(return_value=expected_response)
@@ -29,7 +29,7 @@ class TestAsyncRest:
     
     @pytest.mark.asyncio
     async def test_async_api_client_content_length(self):
-        rest_client = lusid.rest.RESTClientObject(lusid.Configuration.get_default())
+        rest_client = TO_BE_REPLACED.rest.RESTClientObject(TO_BE_REPLACED.Configuration.get_default())
         rest_client.pool_manager = AsyncMock(aiohttp.ClientSession)
 
         expected_response = {"Content-Type": "text/plain", "Content-Length":"17", "version": "2.45"}
@@ -54,8 +54,8 @@ class TestAsyncRest:
 
 class TestSyncRest:
     def test_request_with_plaintext_content_type_calls_req_with_str_data_param(self):
-        rest_client = lusid.extensions.rest.RESTClientObject(
-            lusid.Configuration.get_default()
+        rest_client = TO_BE_REPLACED.extensions.rest.RESTClientObject(
+            TO_BE_REPLACED.Configuration.get_default()
         )
         rest_client.pool_manager = MagicMock(aiohttp.ClientSession)
         expected_response = urllib3.response.HTTPResponse(body="response", status=200)
@@ -74,8 +74,8 @@ class TestSyncRest:
         assert expected_response == response
 
     def test_sync_client_content_length(self):
-        rest_client = lusid.extensions.rest.RESTClientObject(
-            lusid.Configuration.get_default()
+        rest_client = TO_BE_REPLACED.extensions.rest.RESTClientObject(
+            TO_BE_REPLACED.Configuration.get_default()
         )
         rest_client.pool_manager = MagicMock(aiohttp.ClientSession)
         expected_headers = {"Content-Type": "text/plain", "Content-Length":"17", "version": "2.45"}

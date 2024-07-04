@@ -1,9 +1,6 @@
-from lusid.extensions.file_access_token import FileAccessToken
+from TO_BE_REPLACED.extensions.file_access_token import FileAccessToken
 from unittest import mock
 import time
-
-from more_itertools import side_effect
-
 
 class TestFileAccessToken:
     def test_file_access_token_loads_token_from_file(self):
