@@ -1,0 +1,101 @@
+# coding: utf-8
+
+{{>partial_header}}
+
+import unittest
+import json
+from xeger import Xeger
+from {{modelPackage}} import *
+import os
+import pytest
+from {{apiPackage}}.{{classFilename}} import {{classname}}  # noqa: E501
+from {{packageName}} import (
+    ApiClientFactory,
+    ArgsConfigurationLoader
+)
+
+
+class {{#operations}}Test{{classname}}(unittest.IsolatedAsyncioTestCase):
+
+    async def asyncSetUp(self) -> None:
+        config_loaders = [
+            ArgsConfigurationLoader(api_url="http://localhost:5000", access_token="UNUSED")
+        ]
+        api_client_factory = ApiClientFactory(config_loaders=config_loaders)
+        self.api = api_client_factory.build({{classname}}) # noqa: E501
+        return await super().asyncSetUp()
+
+
+    async def asyncTearDown(self) -> None:
+        if self.api is not None:
+            await self.api.api_client.close()
+        return await super().asyncTearDown()
+
+
+   {{#operation}}
+    @pytest.mark.asyncio
+    async def test_{{operationId}}(self) -> None:
+        numRuns = 0
+        numExamples = 1
+        while numRuns < numExamples:
+            numRuns += 1
+            {{#allParams}}
+            {{#vendorExtensions.x-regex}}
+            minLength = {{#schema.minLength}}{{schema.minLength}}{{/schema.minLength}}{{^schema.minLength}}0{{/schema.minLength}}
+            maxLength = {{#schema.maxLength}}{{schema.maxLength}}{{/schema.maxLength}}{{^schema.maxLength}}10{{/schema.maxLength}}
+            # the following is necessary to avoid url becoming longer than acceptable length
+            if maxLength > 20:
+                maxLength = 20
+            xegerObj = Xeger(limit=maxLength)
+            count = 0
+            while True:
+                count += 1
+                {{paramName}}: {{{dataType}}} = xegerObj.xeger(r"{{{vendorExtensions.x-regex}}}")
+                if len({{paramName}}) >= minLength:
+                    break
+                if count > 100:
+                    raise Exception("unable to generate random value for parameter {{paramName}} which matches the constraints")
+            {{/vendorExtensions.x-regex}}
+            {{^vendorExtensions.x-regex}}
+            {{#isPrimitiveType}}
+            {{paramName}}: {{{dataType}}} = {{{example}}}
+            {{/isPrimitiveType}}
+            {{^isPrimitiveType}}
+            {{#content}}
+            spec_filepath = os.environ['OPENAPI_SPEC_PATH']
+            with open(spec_filepath) as file:
+                openapiSpecJson = file.read()
+            
+            method = "{{httpMethod}}".replace("Http", "").lower()
+            jsonContent = json.loads(openapiSpecJson)
+            jsonContent = jsonContent["paths"]["{{path}}"][method]["requestBody"]["content"]["application/json"]
+            {{paramName}}: {{{dataType}}} = None
+            if "example" in jsonContent:
+                {{paramName}}: {{dataType}} = jsonContent["example"]
+            elif "examples" in jsonContent:
+                examples = jsonContent["examples"]
+                examples = [examples[key] for key in examples]
+                example = examples[numRuns - 1]
+                {{paramName}}: {{dataType}} = example["value"]
+                numExamples = len(examples)
+
+            # needed to correctly generate oneOf nested type
+            {{paramName}} = {{dataType}}.construct().from_dict({{paramName}})
+
+            {{/content}}
+            {{^content}}
+            {{paramName}}: {{{dataType}}} = json.loads("""{{{example}}}""")
+            {{/content}}
+            {{/isPrimitiveType}}
+            {{/vendorExtensions.x-regex}}
+            {{/allParams}}
+            {{#returnType}}response = {{/returnType}}await self.api.{{operationId}}({{#allParams}}{{paramName}}{{^-last}}, {{/-last}}{{/allParams}})
+            {{#returnType}}
+            assert(response is not None)
+            {{/returnType}}
+
+   {{/operation}}
+{{/operations}}
+
+if __name__ == '__main__':
+    unittest.main()

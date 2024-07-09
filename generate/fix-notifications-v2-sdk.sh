@@ -5,6 +5,7 @@
 set -euo pipefail
 
 justfile_dir=$1
+package_name=$2
 
 # need the GNU version of sed on a mac
 if [[ $(uname) == Darwin ]]; then
@@ -18,8 +19,8 @@ if [[ $(uname) == Darwin ]]; then
 fi
 
 # fix AmazonSqsNotificationType/Response files
-amazon_sqs_notification_type_file="$justfile_dir/generate/.output/sdk/lusid_notifications/models/amazon_sqs_notification_type.py"
-amazon_sqs_notification_type_response_file="$justfile_dir/generate/.output/sdk/lusid_notifications/models/amazon_sqs_notification_type_response.py"
+amazon_sqs_notification_type_file="$justfile_dir/generate/.output/sdk/$package_name/models/amazon_sqs_notification_type.py"
+amazon_sqs_notification_type_response_file="$justfile_dir/generate/.output/sdk/$package_name/models/amazon_sqs_notification_type_response.py"
 
 for file in $amazon_sqs_notification_type_file $amazon_sqs_notification_type_response_file; do
     # check file exists
@@ -29,7 +30,7 @@ for file in $amazon_sqs_notification_type_file $amazon_sqs_notification_type_res
     fi
 
     # 1. fix if statement
-    if_statement_text_to_replace="if value not in ('AmazonSqs', 'AmazonSqsPrincipalAuth', 'Email', 'Sms', 'Webhook'):"
+    if_statement_text_to_replace="if value not in ('AmazonSqs', 'AmazonSqsPrincipalAuth', 'AzureServiceBus', 'Email', 'Sms', 'Webhook'):"
 
     # check that the expected text exists in the file
     if ! grep -q "$if_statement_text_to_replace" "$file"; then
@@ -43,7 +44,7 @@ for file in $amazon_sqs_notification_type_file $amazon_sqs_notification_type_res
     fi
 
     # 2. fix if statement error message
-    error_msg_text_to_replace="raise ValueError(\"must be one of enum values ('AmazonSqs', 'AmazonSqsPrincipalAuth', 'Email', 'Sms', 'Webhook')\")"
+    error_msg_text_to_replace="raise ValueError(\"must be one of enum values ('AmazonSqs', 'AmazonSqsPrincipalAuth', 'AzureServiceBus', 'Email', 'Sms', 'Webhook')\")"
     
     # check that the expected text exists in the file
     if ! grep -q "$error_msg_text_to_replace" "$file"; then
@@ -58,8 +59,8 @@ for file in $amazon_sqs_notification_type_file $amazon_sqs_notification_type_res
 done
 
 # fix AmazonSqsPrincipalAuthNotificationType/Response files
-amazon_sqs_principal_auth_notification_type_file="$justfile_dir/generate/.output/sdk/lusid_notifications/models/amazon_sqs_principal_auth_notification_type.py"
-amazon_sqs_principal_auth_notification_type_response_file="$justfile_dir/generate/.output/sdk/lusid_notifications/models/amazon_sqs_principal_auth_notification_type_response.py"
+amazon_sqs_principal_auth_notification_type_file="$justfile_dir/generate/.output/sdk/$package_name/models/amazon_sqs_principal_auth_notification_type.py"
+amazon_sqs_principal_auth_notification_type_response_file="$justfile_dir/generate/.output/sdk/$package_name/models/amazon_sqs_principal_auth_notification_type_response.py"
 for file in $amazon_sqs_principal_auth_notification_type_file $amazon_sqs_principal_auth_notification_type_response_file; do
     # check file exists
     if ! [[ -f $file ]]; then

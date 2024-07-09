@@ -21,6 +21,7 @@ export FBN_CLIENT_ID := `echo ${FBN_CLIENT_ID:-client-id}`
 export FBN_CLIENT_SECRET := `echo ${FBN_CLIENT_SECRET:-client-secret}`
 export TEST_API_MODULE := `echo ${TEST_API_MODULE:-api.application_metadata_api}`
 export TEST_API := `echo ${TEST_API:-ApplicationMetadataApii}`
+export GENERATE_API_TESTS := `echo ${GENERATE_API_TESTS:-true}`
 
 swagger_path := "./swagger.json"
 
@@ -42,7 +43,7 @@ generate-templates:
 
 generate-local FLAG="":
     # check if the notifications fix flag has been set
-    if [[ "{{FLAG}}" != "{{fix_notifications_v2_sdk_flag}}" && -n "{{FLAG}}" ]]; then echo "unexpected flag '{{FLAG}}' ... did you mean '{{fix_notifications_v2_sdk_flag}}'?"; fi
+    if [ "{{FLAG}}" != "{{fix_notifications_v2_sdk_flag}}" ] && [ -n "{{FLAG}}" ]; then echo "unexpected flag '{{FLAG}}' ... did you mean '{{fix_notifications_v2_sdk_flag}}'?"; fi
     
     # generate the sdk
     rm -r {{justfile_directory()}}/generate/.output || true # ensure a clean output dir before starting
@@ -50,6 +51,7 @@ generate-local FLAG="":
     docker run \
         -e JAVA_OPTS="-Dlog.level=error -Xmx6g" \
         -e PACKAGE_VERSION=${PACKAGE_VERSION} \
+        -e GENERATE_API_TESTS=${GENERATE_API_TESTS} \
         -v {{justfile_directory()}}/generate/:/usr/src/generate/ \
         -v {{justfile_directory()}}/generate/.openapi-generator-ignore:/usr/src/generate/.output/.openapi-generator-ignore \
         -v {{justfile_directory()}}/{{swagger_path}}:/tmp/swagger.json \
@@ -57,7 +59,7 @@ generate-local FLAG="":
     rm -f generate/.output/.openapi-generator-ignore
     
     # try to fix the notifications sdk if flag set
-    if [[ "{{FLAG}}" == "{{fix_notifications_v2_sdk_flag}}" ]]; then just fix-notifications-v2-sdk; fi
+    if [ "{{FLAG}}" = "{{fix_notifications_v2_sdk_flag}}" ]; then just fix-notifications-v2-sdk; fi
 
 add-tests:
     mkdir -p {{justfile_directory()}}/generate/.output/sdk/test/
@@ -128,7 +130,7 @@ generate TARGET_DIR FLAG="":
 # Generate an SDK from a swagger.json and copy the output to the TARGET_DIR
 generate-cicd TARGET_DIR FLAG="":
     # check if the notifications fix flag has been set
-    if [[ "{{FLAG}}" != "{{fix_notifications_v2_sdk_flag}}" && -n "{{FLAG}}" ]]; then echo "unexpected flag '{{FLAG}}' ... did you mean '{{fix_notifications_v2_sdk_flag}}'?"; fi
+    if [ "{{FLAG}}" != "{{fix_notifications_v2_sdk_flag}}" ] && [ -n "{{FLAG}}" ]; then echo "unexpected flag '{{FLAG}}' ... did you mean '{{fix_notifications_v2_sdk_flag}}'?"; fi
     
     mkdir -p {{TARGET_DIR}}
     mkdir -p ./generate/.output
@@ -139,7 +141,7 @@ generate-cicd TARGET_DIR FLAG="":
     rm -f generate/.output/.openapi-generator-ignore
 
     # try to fix the notifications sdk if flag set
-    if [[ "{{FLAG}}" == "{{fix_notifications_v2_sdk_flag}}" ]]; then just fix-notifications-v2-sdk; fi
+    if [ "{{FLAG}}" = "{{fix_notifications_v2_sdk_flag}}" ]; then just fix-notifications-v2-sdk; fi
 
     # need to remove the created content before copying over the top of it.
     # this prevents deleted content from hanging around indefinitely.
@@ -192,5 +194,5 @@ generate-and-publish-cicd OUT_DIR FLAG="":
     @just publish-cicd {{OUT_DIR}}
 
 fix-notifications-v2-sdk:
-    bash {{justfile_directory()}}/generate/fix-notifications-v2-sdk.sh {{justfile_directory()}}
+    bash {{justfile_directory()}}/generate/fix-notifications-v2-sdk.sh {{justfile_directory()}} ${PACKAGE_NAME}
 

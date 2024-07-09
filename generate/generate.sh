@@ -39,10 +39,11 @@ if [[ -z $config_file_name || ! -f $gen_root/$config_file_name ]] ; then
     config_file_name=.config.json
 fi
 
-echo "[INFO] root generation : $gen_root"
-echo "[INFO] output folder   : $output_folder"
-echo "[INFO] swagger file    : $swagger_file"
-echo "[INFO] config file     : $config_file_name"
+echo "[INFO] root generation      : $gen_root"
+echo "[INFO] output folder        : $output_folder"
+echo "[INFO] swagger file         : $swagger_file"
+echo "[INFO] config file          : $config_file_name"
+echo "[INFO] generating api tests : $GENERATE_API_TESTS"
 
 ignore_file_name=.openapi-generator-ignore
 config_file=$gen_root/$config_file_name
@@ -71,7 +72,7 @@ echo "[INFO] generating sdk version: ${PACKAGE_VERSION}"
 
 # generate the SDK
 java ${JAVA_OPTS} -jar /opt/openapi-generator/modules/openapi-generator-cli/target/openapi-generator-cli.jar generate \
-    --global-property modelTests=false,apiTests=false \
+    --global-property modelTests=false,apiTests=${GENERATE_API_TESTS} \
     -i $sdk_output_folder/swagger.json \
     -g python \
     -o $sdk_output_folder \
@@ -82,7 +83,6 @@ java ${JAVA_OPTS} -jar /opt/openapi-generator/modules/openapi-generator-cli/targ
 
 
 rm -rf $sdk_output_folder/.openapi-generator/
-rm -rf $sdk_output_folder/test/
 rm -f $sdk_output_folder/.gitlab-ci.yml $sdk_output_folder/setup.cfg
 rm -f $sdk_output_folder/.openapi-generator-ignore
 rm -f $sdk_output_folder/swagger.json
