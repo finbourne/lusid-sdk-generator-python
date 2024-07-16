@@ -18,8 +18,12 @@ from {{packageName}} import (
 class {{#operations}}Test{{classname}}(unittest.IsolatedAsyncioTestCase):
 
     async def asyncSetUp(self) -> None:
+        if "BASE_URL" in os.environ:
+            api_url = os.environ["BASE_URL"]
+        else:
+            api_url = "http://localhost:5000"
         config_loaders = [
-            ArgsConfigurationLoader(api_url="http://localhost:5000", access_token="UNUSED")
+            ArgsConfigurationLoader(api_url=api_url, access_token="UNUSED")
         ]
         api_client_factory = ApiClientFactory(config_loaders=config_loaders)
         self.api = api_client_factory.build({{classname}}) # noqa: E501
