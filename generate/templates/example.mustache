@@ -1,0 +1,57 @@
+```python
+{{#asyncio}}import asyncio{{/asyncio}}
+from {{{packageName}}}.exceptions import ApiException
+from {{{modelPackage}}} import *
+from pprint import pprint
+from {{packageName}} import (
+    ApiClientFactory,
+    {{{classname}}}
+)
+
+{{#asyncio}}async {{/asyncio}}def main():
+
+    with open("secrets.json", "w") as file:
+        file.write('''
+{
+    "api":
+    {
+        "tokenUrl":"<your-token-url>",
+        "{{#lambda.camelcase}}{{application}}{{/lambda.camelcase}}Url":"https://<your-domain>.lusid.com{{basePathWithoutHost}}",
+        "username":"<your-username>",
+        "password":"<your-password>",
+        "clientId":"<your-client-id>",
+        "clientSecret":"<your-client-secret>"
+    }
+}''')
+
+    # Use the {{packageName}} ApiClientFactory to build Api instances with a configured api client
+    # By default this will read config from environment variables
+    # Then from a secrets.json file found in the current working directory
+    api_client_factory = ApiClientFactory()
+
+    # Enter a context with an instance of the ApiClientFactory to ensure the connection pool is closed after use
+    {{#asyncio}}async {{/asyncio}}with api_client_factory:
+        # Create an instance of the API class
+        api_instance = api_client_factory.build({{{classname}}})
+        {{#allParams}}
+        {{^isModel}}
+        {{paramName}} = {{{example}}} # {{{dataType}}} | {{{description}}}{{^required}} (optional){{/required}}{{#defaultValue}} (default to {{{.}}}){{/defaultValue}}{{/isModel}}{{#isModel}}
+        # Objects can be created either via the class constructor, or using the 'from_dict' or 'from_json' methods
+        # Change the lines below to switch approach
+        # {{paramName}} = {{{dataType}}}()
+        # {{paramName}} = {{{dataType}}}.from_json("")
+        {{paramName}} = {{{dataType}}}.from_dict({{{example}}}) # {{{dataType}}} | {{{description}}}{{^required}} (optional){{/required}}{{#defaultValue}} (default to {{{.}}}){{/defaultValue}}{{/isModel}}
+        {{/allParams}}
+
+        try:
+            {{#summary}}
+            # {{{.}}}
+            {{/summary}}
+            {{#returnType}}api_response = {{/returnType}}{{#asyncio}}await {{/asyncio}}api_instance.{{{operationId}}}({{#allParams}}{{#required}}{{paramName}}{{/required}}{{^required}}{{paramName}}={{paramName}}{{/required}}{{^-last}}, {{/-last}}{{/allParams}}){{#returnType}}
+            pprint(api_response)
+            {{/returnType}}
+        except ApiException as e:
+            print("Exception when calling {{classname}}->{{operationId}}: %s\n" % e)
+
+{{#asyncio}}asyncio.run(main()){{/asyncio}}{{^asyncio}}main(){{/asyncio}}
+```

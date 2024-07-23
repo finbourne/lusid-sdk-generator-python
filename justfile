@@ -6,6 +6,7 @@
 #    PACKAGE_VERSION
 #    PYPI_PACKAGE_LOCATION
 
+export APPLICATION_NAME := `echo ${APPLICATION_NAME:-lusid}`
 export PACKAGE_NAME := `echo ${PACKAGE_NAME:-lusid}`
 export PROJECT_NAME := `echo ${PROJECT_NAME:-lusid-sdk}`
 export PACKAGE_VERSION := `echo ${PACKAGE_VERSION:-2.0.0}`
@@ -36,7 +37,6 @@ build-docker-images:
     docker build -t finbourne/lusid-sdk-gen-python:latest --ssh default=$SSH_AUTH_SOCK -f Dockerfile .
 
 generate-templates:
-    envsubst < generate/config-template.json > generate/.config.json
     docker run \
         -v {{justfile_directory()}}/.templates:/usr/src/templates \
         finbourne/lusid-sdk-gen-python:latest -- java -jar /opt/openapi-generator/modules/openapi-generator-cli/target/openapi-generator-cli.jar author template -g python -o /usr/src/templates
@@ -48,6 +48,7 @@ generate-local FLAG="":
     # generate the sdk
     rm -r {{justfile_directory()}}/generate/.output || true # ensure a clean output dir before starting
     envsubst < generate/config-template.json > generate/.config.json
+    cp generate/templates/description.{{APPLICATION_NAME}}.mustache generate/templates/description.mustache
     docker run \
         -e JAVA_OPTS="-Dlog.level=error -Xmx6g" \
         -e PACKAGE_VERSION=${PACKAGE_VERSION} \
@@ -57,6 +58,10 @@ generate-local FLAG="":
         -v {{justfile_directory()}}/{{swagger_path}}:/tmp/swagger.json \
         finbourne/lusid-sdk-gen-python:latest -- ./generate/generate.sh ./generate ./generate/.output /tmp/swagger.json .config.json
     rm -f generate/.output/.openapi-generator-ignore
+    rm generate/templates/description.mustache
+
+    # split the README into two, and move one up a level
+    bash generate/split-readme.sh
     
     # try to fix the notifications sdk if flag set
     if [ "{{FLAG}}" = "{{fix_notifications_v2_sdk_flag}}" ]; then just fix-notifications-v2-sdk; fi
@@ -136,9 +141,13 @@ generate-cicd TARGET_DIR FLAG="":
     mkdir -p ./generate/.output
     envsubst < generate/config-template.json > generate/.config.json
     cp ./generate/.openapi-generator-ignore ./generate/.output/.openapi-generator-ignore
+    cp ./generate/templates/description.{{APPLICATION_NAME}}.mustache ./generate/templates/description.mustache
 
     ./generate/generate.sh ./generate ./generate/.output {{swagger_path}} .config.json
     rm -f generate/.output/.openapi-generator-ignore
+
+    # split the README into two, and move one up a level
+    bash generate/split-readme.sh
 
     # try to fix the notifications sdk if flag set
     if [ "{{FLAG}}" = "{{fix_notifications_v2_sdk_flag}}" ]; then just fix-notifications-v2-sdk; fi

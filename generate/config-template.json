@@ -8,6 +8,7 @@
     "licenseInfo": "MIT",
     "datetimeFormat": "%Y-%m-%dT%H:%M:%S.%fZ",
     "isLusidPackage": true,
+    "application": "${APPLICATION_NAME}",
     "gitUserId": "${GIT_USER_ID}",
     "gitRepoId": "${GIT_REPO_ID}",
     "additionalProperties": {
