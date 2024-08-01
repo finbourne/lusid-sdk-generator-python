@@ -2,6 +2,7 @@
 
 {{>partial_header}}
 
+from typing import List
 import unittest
 import json
 from xeger import Xeger
@@ -48,8 +49,8 @@ class {{#operations}}Test{{classname}}(unittest.IsolatedAsyncioTestCase):
             minLength = {{#schema.minLength}}{{schema.minLength}}{{/schema.minLength}}{{^schema.minLength}}0{{/schema.minLength}}
             maxLength = {{#schema.maxLength}}{{schema.maxLength}}{{/schema.maxLength}}{{^schema.maxLength}}10{{/schema.maxLength}}
             # the following is necessary to avoid url becoming longer than acceptable length
-            if maxLength > 20:
-                maxLength = 20
+            if maxLength > 50:
+                maxLength = 50
             xegerObj = Xeger(limit=maxLength)
             count = 0
             while True:
@@ -62,7 +63,16 @@ class {{#operations}}Test{{classname}}(unittest.IsolatedAsyncioTestCase):
             {{/vendorExtensions.x-regex}}
             {{^vendorExtensions.x-regex}}
             {{#isPrimitiveType}}
+            {{#isUuid}}
+            # this parameter must follow the uuid syntax - make sure it doesn't contain invalid characters
+            if "_" in {{{example}}}:
+                {{paramName}}: {{{dataType}}} = "71beb2cb-be3a-4662-b8ee-e5ded63b957a"
+            else:
+                {{paramName}}: {{{dataType}}} = {{{example}}}
+            {{/isUuid}}
+            {{^isUuid}}
             {{paramName}}: {{{dataType}}} = {{{example}}}
+            {{/isUuid}}
             {{/isPrimitiveType}}
             {{^isPrimitiveType}}
             {{#content}}
@@ -83,12 +93,14 @@ class {{#operations}}Test{{classname}}(unittest.IsolatedAsyncioTestCase):
                 {{paramName}}: {{dataType}} = example["value"]
                 numExamples = len(examples)
 
-            # needed to correctly generate oneOf nested type
-            {{paramName}} = {{dataType}}.construct().from_dict({{paramName}})
+            {{paramName}} = {{dataType}}.from_dict({{paramName}})
 
             {{/content}}
             {{^content}}
-            {{paramName}}: {{{dataType}}} = json.loads("""{{{example}}}""")
+            {{#isArray}}
+            {{paramName}}: {{{dataType}}} = {{{example}}}{{/isArray}}
+            {{^isArray}}
+            {{paramName}}: {{{dataType}}} = json.loads("""{{{example}}}"""){{/isArray}}
             {{/content}}
             {{/isPrimitiveType}}
             {{/vendorExtensions.x-regex}}

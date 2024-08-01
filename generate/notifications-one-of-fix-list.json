@@ -1,0 +1,24 @@
+{
+    "items": [
+        {
+            "file": "amazon_sqs_notification_type",
+            "find": "'AmazonSqs', 'AmazonSqsPrincipalAuth', 'AzureServiceBus', 'Email', 'Sms', 'Webhook'",
+            "replace": "'AmazonSqs'"
+        },
+        {
+            "file": "amazon_sqs_notification_type_response",
+            "find": "'AmazonSqs', 'AmazonSqsPrincipalAuth', 'AzureServiceBus', 'Email', 'Sms', 'Webhook'",
+            "replace": "'AmazonSqs'"
+        },
+        {
+            "file": "amazon_sqs_principal_auth_notification_type",
+            "find": "'AmazonSqsPrincipalAuth'",
+            "replace": "'AmazonSqsPrincipalAuth'"
+        },
+        {
+            "file": "amazon_sqs_principal_auth_notification_type_response",
+            "find": "'AmazonSqsPrincipalAuth'",
+            "replace": "'AmazonSqsPrincipalAuth'"
+        }
+    ]
+}

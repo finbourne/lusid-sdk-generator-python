@@ -1,0 +1,24 @@
+{
+    "items": [
+        {
+            "file": "create_child_tasks_action",
+            "find": "'CreateChildTasks', 'RunWorker', 'TriggerParentTask'",
+            "replace": "'CreateChildTasks'"
+        },
+        {
+            "file": "create_child_tasks_action_response",
+            "find": "'CreateChildTasks', 'RunWorker', 'TriggerParentTask'",
+            "replace": "'CreateChildTasks'"
+        },
+        {
+            "file": "fail",
+            "find": "'Fail', 'HealthCheck', 'LuminesceView', 'SchedulerJob', 'Sleep'",
+            "replace": "'Fail'"
+        },
+        {
+            "file": "fail_response",
+            "find": "'Fail', 'HealthCheck', 'LuminesceView', 'SchedulerJob', 'Sleep'",
+            "replace": "'Fail'"
+        }
+    ]
+}

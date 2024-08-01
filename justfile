@@ -27,7 +27,6 @@ export GENERATE_API_TESTS := `echo ${GENERATE_API_TESTS:-false}`
 swagger_path := "./swagger.json"
 
 swagger_url := "https://fbn-prd.lusid.com/api/swagger/v0/swagger.json"
-fix_notifications_v2_sdk_flag := "--fix-notifications-v2-sdk"
 
 get-swagger:
     echo {{swagger_url}}
@@ -42,9 +41,6 @@ generate-templates:
         finbourne/lusid-sdk-gen-python:latest -- java -jar /opt/openapi-generator/modules/openapi-generator-cli/target/openapi-generator-cli.jar author template -g python -o /usr/src/templates
 
 generate-local FLAG="":
-    # check if the notifications fix flag has been set
-    if [ "{{FLAG}}" != "{{fix_notifications_v2_sdk_flag}}" ] && [ -n "{{FLAG}}" ]; then echo "unexpected flag '{{FLAG}}' ... did you mean '{{fix_notifications_v2_sdk_flag}}'?"; fi
-    
     # generate the sdk
     rm -r {{justfile_directory()}}/generate/.output || true # ensure a clean output dir before starting
     envsubst < generate/config-template.json > generate/.config.json
@@ -63,8 +59,9 @@ generate-local FLAG="":
     # split the README into two, and move one up a level
     bash generate/split-readme.sh
     
-    # try to fix the notifications sdk if flag set
-    if [ "{{FLAG}}" = "{{fix_notifications_v2_sdk_flag}}" ]; then just fix-notifications-v2-sdk; fi
+    # make the necessary post-generation fixes to the sdks using the 'oneOf' openapi feature
+    # caused by a bug in the python generator
+    if [ "{{APPLICATION_NAME}}" = "notifications" ] || [ "{{APPLICATION_NAME}}" = "workflow" ]; then just make-fix-for-one-of; fi
 
 add-tests:
     mkdir -p {{justfile_directory()}}/generate/.output/sdk/test/
@@ -134,9 +131,6 @@ generate TARGET_DIR FLAG="":
 
 # Generate an SDK from a swagger.json and copy the output to the TARGET_DIR
 generate-cicd TARGET_DIR FLAG="":
-    # check if the notifications fix flag has been set
-    if [ "{{FLAG}}" != "{{fix_notifications_v2_sdk_flag}}" ] && [ -n "{{FLAG}}" ]; then echo "unexpected flag '{{FLAG}}' ... did you mean '{{fix_notifications_v2_sdk_flag}}'?"; fi
-    
     mkdir -p {{TARGET_DIR}}
     mkdir -p ./generate/.output
     envsubst < generate/config-template.json > generate/.config.json
@@ -149,8 +143,9 @@ generate-cicd TARGET_DIR FLAG="":
     # split the README into two, and move one up a level
     bash generate/split-readme.sh
 
-    # try to fix the notifications sdk if flag set
-    if [ "{{FLAG}}" = "{{fix_notifications_v2_sdk_flag}}" ]; then just fix-notifications-v2-sdk; fi
+    # make the necessary post-generation fixes to the sdks using the 'oneOf' openapi feature
+    # caused by a bug in the python generator
+    if [ "{{APPLICATION_NAME}}" = "notifications" ] || [ "{{APPLICATION_NAME}}" = "workflow" ]; then just make-fix-for-one-of; fi
 
     # need to remove the created content before copying over the top of it.
     # this prevents deleted content from hanging around indefinitely.
@@ -202,6 +197,6 @@ generate-and-publish-cicd OUT_DIR FLAG="":
     @just generate-cicd {{OUT_DIR}} {{FLAG}}
     @just publish-cicd {{OUT_DIR}}
 
-fix-notifications-v2-sdk:
-    bash {{justfile_directory()}}/generate/fix-notifications-v2-sdk.sh {{justfile_directory()}} ${PACKAGE_NAME}
+make-fix-for-one-of:
+    bash {{justfile_directory()}}/generate/fix-files-for-one-of.sh {{justfile_directory()}} ${PACKAGE_NAME} ${APPLICATION_NAME}
 
