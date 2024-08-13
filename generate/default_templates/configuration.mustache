@@ -493,15 +493,26 @@ conf = {{{packageName}}}.Configuration(
   {{/isBasicBasic}}
   {{#isBasicBearer}}
         if self.access_token is not None:
-            auth['{{name}}'] = {
-                'type': 'bearer',
-                'in': 'header',
-                {{#bearerFormat}}
-                'format': '{{{.}}}',
-                {{/bearerFormat}}
-                'key': 'Authorization',
-                'value': 'Bearer ' + self.access_token
-            }
+            if isinstance(self.access_token, str):
+                auth['{{name}}'] = {
+                    'type': 'bearer',
+                    'in': 'header',
+                    {{#bearerFormat}}
+                    'format': '{{{.}}}',
+                    {{/bearerFormat}}
+                    'key': 'Authorization',
+                    'value': 'Bearer ' + self.access_token
+                }
+            else:
+                auth['{{name}}'] = {
+                    'type': 'bearer',
+                    'in': 'header',
+                    {{#bearerFormat}}
+                    'format': '{{{.}}}',
+                    {{/bearerFormat}}
+                    'key': 'Authorization',
+                    'value': 'Bearer ' + self.access_token.data
+                }
   {{/isBasicBearer}}
   {{#isHttpSignature}}
         if self.signing_info is not None:
@@ -515,6 +526,11 @@ conf = {{{packageName}}}.Configuration(
 {{/isBasic}}
 {{#isOAuth}}
         if self.access_token is not None:
+            if isinstance(self.access_token, str):
+                print("The variable is of type str.")
+            else:
+                print('self.access_token', type(self.access_token))
+                raise TypeError("The variable must be of type ",type(self.access_token))
             auth['{{name}}'] = {
                 'type': 'oauth2',
                 'in': 'header',

@@ -1,5 +1,5 @@
 from aiohttp import ClientSession, TCPConnector, TraceConfig
-from TO_BE_REPLACED import SyncApiClientFactory, ApiClientFactory
+from TO_BE_REPLACED import SyncApiClientFactory, ApiClientFactory, FileTokenConfigurationLoader, ArgsConfigurationLoader
 from TO_BE_REPLACED.api_client import ApiClient as AsyncApiClient
 from TO_BE_REPLACED.extensions.api_client import SyncApiClient
 from TO_BE_REPLACED.extensions.api_client_factory import set_additional_api_client_headers
@@ -14,6 +14,7 @@ from TO_BE_REPLACED.extensions.tcp_keep_alive_connector import (
 )
 import pytest
 import pytest_asyncio
+from unittest import mock
 
 
 @pytest.fixture
@@ -324,3 +325,18 @@ class TestAsyncApiClientFactory:
             == api_instance.api_client.rest_client.rest_object.pool_manager.connector_owner
         )
     
+    @pytest.mark.asyncio
+    async def test_api_client_without_config(self):
+        with mock.patch("builtins.open", mock.mock_open(read_data="sample_token")):
+            
+            # assert "sample_token" == config["access_token"]
+            file_token_loader= FileTokenConfigurationLoader(access_token_location="test_file")
+            config_loaders=[file_token_loader,ArgsConfigurationLoader(app_name="Testing domain",  
+                api_url='https://fbn-prd.lusid.com/api')]
+            api_client_factory = ApiClientFactory(config_loaders=config_loaders)
+            
+            async with api_client_factory:
+                api_instance = api_client_factory.build(ApplicationMetadataApi)
+                response = await api_instance.get_lusid_versions_with_http_info()
+                assert response.status_code == 200
+                assert isinstance(response, ApiResponse)
