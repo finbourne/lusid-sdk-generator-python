@@ -1,5 +1,6 @@
 from aiohttp import ClientSession, TCPConnector, TraceConfig
-from TO_BE_REPLACED import SyncApiClientFactory, ApiClientFactory, FileTokenConfigurationLoader, ArgsConfigurationLoader
+from TO_BE_REPLACED import SyncApiClientFactory, ApiClientFactory, FileTokenConfigurationLoader, ArgsConfigurationLoader, ApplicationMetadataApi
+from TO_BE_REPLACED.api_response import ApiResponse
 from TO_BE_REPLACED.api_client import ApiClient as AsyncApiClient
 from TO_BE_REPLACED.extensions.api_client import SyncApiClient
 from TO_BE_REPLACED.extensions.api_client_factory import set_additional_api_client_headers
@@ -324,19 +325,32 @@ class TestAsyncApiClientFactory:
             True
             == api_instance.api_client.rest_client.rest_object.pool_manager.connector_owner
         )
-    
-    @pytest.mark.asyncio
-    async def test_api_client_without_config(self):
+
+class TestApiClientFileTokenConfiguration:
+    def test_api_client_with_config(self):
         with mock.patch("builtins.open", mock.mock_open(read_data="sample_token")):
             
-            # assert "sample_token" == config["access_token"]
-            file_token_loader= FileTokenConfigurationLoader(access_token_location="test_file")
-            config_loaders=[file_token_loader,ArgsConfigurationLoader(app_name="Testing domain",  
-                api_url='https://fbn-prd.lusid.com/api')]
-            api_client_factory = ApiClientFactory(config_loaders=config_loaders)
+            file_token_loader = FileTokenConfigurationLoader(access_token_location="test_file")
+            config = file_token_loader.load_config()
+            assert "sample_token" == config["access_token"]
+
+    def test_api_with_no_path(self):
+        config_loader = FileTokenConfigurationLoader(access_token_location="")
+        config = config_loader.load_config()
+        assert config["access_token"] is None
+    
+    def test_api_with_incorrect_path(self):
+        # Mock the open function to raise FileNotFoundError when called
+        with mock.patch("builtins.open", mock.mock_open()) as mocked_open:
+            mocked_open.side_effect = FileNotFoundError
             
-            async with api_client_factory:
-                api_instance = api_client_factory.build(ApplicationMetadataApi)
-                response = await api_instance.get_lusid_versions_with_http_info()
-                assert response.status_code == 200
-                assert isinstance(response, ApiResponse)
+            file_token_loader = FileTokenConfigurationLoader(access_token_location="invalid_path")
+
+            caught_exception = False    
+            try:
+                config = file_token_loader.load_config()
+            except FileNotFoundError:
+                caught_exception = True
+            
+            assert(caught_exception is True)
+            
