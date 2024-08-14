@@ -527,16 +527,25 @@ conf = {{{packageName}}}.Configuration(
 {{#isOAuth}}
         if self.access_token is not None:
             if isinstance(self.access_token, str):
-                print("The variable is of type str.")
+                auth['{{name}}'] = {
+                    'type': 'bearer',
+                    'in': 'header',
+                    {{#bearerFormat}}
+                    'format': '{{{.}}}',
+                    {{/bearerFormat}}
+                    'key': 'Authorization',
+                    'value': 'Bearer ' + self.access_token
+                }
             else:
-                print('self.access_token', type(self.access_token))
-                raise TypeError("The variable must be of type ",type(self.access_token))
-            auth['{{name}}'] = {
-                'type': 'oauth2',
-                'in': 'header',
-                'key': 'Authorization',
-                'value': 'Bearer ' + self.access_token
-            }
+                auth['{{name}}'] = {
+                    'type': 'bearer',
+                    'in': 'header',
+                    {{#bearerFormat}}
+                    'format': '{{{.}}}',
+                    {{/bearerFormat}}
+                    'key': 'Authorization',
+                    'value': 'Bearer ' + self.access_token.data
+                }
 {{/isOAuth}}
 {{/authMethods}}
         return auth
