@@ -493,26 +493,15 @@ conf = {{{packageName}}}.Configuration(
   {{/isBasicBasic}}
   {{#isBasicBearer}}
         if self.access_token is not None:
-            if isinstance(self.access_token, str):
-                auth['{{name}}'] = {
-                    'type': 'bearer',
-                    'in': 'header',
-                    {{#bearerFormat}}
-                    'format': '{{{.}}}',
-                    {{/bearerFormat}}
-                    'key': 'Authorization',
-                    'value': 'Bearer ' + self.access_token
-                }
-            else:
-                auth['{{name}}'] = {
-                    'type': 'bearer',
-                    'in': 'header',
-                    {{#bearerFormat}}
-                    'format': '{{{.}}}',
-                    {{/bearerFormat}}
-                    'key': 'Authorization',
-                    'value': 'Bearer ' + self.access_token.data
-                }
+            auth['{{name}}'] = {
+                'type': 'bearer',
+                'in': 'header',
+                {{#bearerFormat}}
+                'format': '{{{.}}}',
+                {{/bearerFormat}}
+                'key': 'Authorization',
+                'value': 'Bearer ' + self.access_token
+            }
   {{/isBasicBearer}}
   {{#isHttpSignature}}
         if self.signing_info is not None:
@@ -526,26 +515,12 @@ conf = {{{packageName}}}.Configuration(
 {{/isBasic}}
 {{#isOAuth}}
         if self.access_token is not None:
-            if isinstance(self.access_token, str):
-                auth['{{name}}'] = {
-                    'type': 'bearer',
-                    'in': 'header',
-                    {{#bearerFormat}}
-                    'format': '{{{.}}}',
-                    {{/bearerFormat}}
-                    'key': 'Authorization',
-                    'value': 'Bearer ' + self.access_token
-                }
-            else:
-                auth['{{name}}'] = {
-                    'type': 'bearer',
-                    'in': 'header',
-                    {{#bearerFormat}}
-                    'format': '{{{.}}}',
-                    {{/bearerFormat}}
-                    'key': 'Authorization',
-                    'value': 'Bearer ' + self.access_token.data
-                }
+            auth['{{name}}'] = {
+                'type': 'oauth2',
+                'in': 'header',
+                'key': 'Authorization',
+                'value': 'Bearer ' + self.access_token
+            }
 {{/isOAuth}}
 {{/authMethods}}
         return auth
