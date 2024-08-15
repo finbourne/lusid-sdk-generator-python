@@ -340,17 +340,10 @@ class TestApiClientFileTokenConfiguration:
         assert config["access_token"] is None
     
     def test_api_with_incorrect_path(self):
-        # Mock the open function to raise FileNotFoundError when called
-        with mock.patch("builtins.open", mock.mock_open()) as mocked_open:
+        with mock.patch("builtins.open", mock.mock_open(read_data="sample_token")) as mocked_open:
             mocked_open.side_effect = FileNotFoundError
-            
-            file_token_loader = FileTokenConfigurationLoader(access_token_location="invalid_path")
-
-            caught_exception = False    
-            try:
+            with pytest.raises(FileNotFoundError):
+                file_token_loader = FileTokenConfigurationLoader(access_token_location="invalid_path")
                 config = file_token_loader.load_config()
-            except FileNotFoundError:
-                caught_exception = True
-            
-            assert(caught_exception is True)
+                print(config) # Forces error to be raised
             
