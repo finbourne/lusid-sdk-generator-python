@@ -2,7 +2,7 @@
 
 {{>partial_header}}
 
-from typing import List
+from typing import List, Dict
 import unittest
 import json
 from xeger import Xeger
@@ -55,7 +55,19 @@ class {{#operations}}Test{{classname}}(unittest.IsolatedAsyncioTestCase):
             count = 0
             while True:
                 count += 1
+                regex = r"{{{vendorExtensions.x-regex}}}"
+                # The regex map is required due to a limitation of Xeger library where it fails 
+                # correctly generate the string from the regex
+                regex_map = {
+                    r'^(?=.*[a-zA-Z])[\w][\w +-]{2,100}$': "official-portfolios-read-only",
+                    r'^[a-zA-Z0-9\\+/]*={0,3}$': "L=="
+                }
+
                 {{paramName}}: {{{dataType}}} = xegerObj.xeger(r"{{{vendorExtensions.x-regex}}}")
+
+                if regex in regex_map:
+                    {{paramName}} = regex_map[regex]
+
                 if len({{paramName}}) >= minLength:
                     break
                 if count > 100:
@@ -93,7 +105,8 @@ class {{#operations}}Test{{classname}}(unittest.IsolatedAsyncioTestCase):
                 {{paramName}}: {{dataType}} = example["value"]
                 numExamples = len(examples)
 
-            {{paramName}} = {{dataType}}.from_dict({{paramName}})
+            if hasattr({{dataType}}, 'from_dict') and callable(getattr({{dataType}}, 'from_dict')):
+                {{paramName}} = {{dataType}}.from_dict({{paramName}})
 
             {{/content}}
             {{^content}}

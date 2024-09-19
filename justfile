@@ -56,13 +56,16 @@ generate-local FLAG="":
         finbourne/lusid-sdk-gen-python:latest -- ./generate/generate.sh ./generate ./generate/.output /tmp/swagger.json .config.json
     rm -f generate/.output/.openapi-generator-ignore
     rm generate/templates/description.mustache
-
     # split the README into two, and move one up a level
     bash generate/split-readme.sh
     
     # make the necessary post-generation fixes to the sdks using the 'oneOf' openapi feature
     # caused by a bug in the python generator
     if [ "{{APPLICATION_NAME}}" = "notifications" ] || [ "{{APPLICATION_NAME}}" = "workflow" ]; then just make-fix-for-one-of; fi
+
+    echo "Application name: $APPLICATION_NAME"
+
+    if [ "{{APPLICATION_NAME}}" = "access" ]; then just make-import-fix; fi
 
 add-tests:
     mkdir -p {{justfile_directory()}}/generate/.output/sdk/test/
@@ -150,6 +153,8 @@ generate-cicd TARGET_DIR FLAG="":
     # caused by a bug in the python generator
     if [ "{{APPLICATION_NAME}}" = "notifications" ] || [ "{{APPLICATION_NAME}}" = "workflow" ]; then just make-fix-for-one-of; fi
 
+    if [ "{{APPLICATION_NAME}}" = "access" ]; then just make-import-fix; fi
+
     # need to remove the created content before copying over the top of it.
     # this prevents deleted content from hanging around indefinitely.
     rm -rf {{TARGET_DIR}}/sdk/${PACKAGE_NAME}
@@ -203,3 +208,12 @@ generate-and-publish-cicd OUT_DIR FLAG="":
 make-fix-for-one-of:
     bash {{justfile_directory()}}/generate/fix-files-for-one-of.sh {{justfile_directory()}} ${PACKAGE_NAME} ${APPLICATION_NAME}
 
+make-import-fix:
+    bash {{justfile_directory()}}/generate/fix-imports-for-access.sh \
+    {{justfile_directory()}}/generate/.output/sdk/finbourne_access/models/policy_selector_definition.py \
+    "from finbourne_access.models.selector_definition import SelectorDefinition" \
+    "PolicySelectorDefinition.update_forward_refs()"
+    bash {{justfile_directory()}}/generate/fix-imports-for-access.sh \
+    {{justfile_directory()}}/generate/.output/sdk/finbourne_access/models/selector_definition.py \
+    "from finbourne_access.models.policy_selector_definition import PolicySelectorDefinition" \
+    "SelectorDefinition.update_forward_refs()"
