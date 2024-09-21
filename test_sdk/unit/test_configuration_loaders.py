@@ -1,4 +1,5 @@
 import json
+import pytest
 from TO_BE_REPLACED.extensions import (
     SecretsFileConfigurationLoader,
     EnvironmentVariablesConfigurationLoader,
@@ -24,6 +25,10 @@ class TestSecretsFileConfigurationLoader:
             "proxy_address": None,
             "proxy_username": None,
             "proxy_password": None,
+            "total_timeout_ms": 3000,
+            "connect_timeout_ms": 2000,
+            "read_timeout_ms": 1000,
+            "rate_limit_retries": 5,
         }
 
         secrets_file_contents = {
@@ -37,6 +42,10 @@ class TestSecretsFileConfigurationLoader:
                 "applicationName": "sample_applicationName",
                 "clientCertificate": "sample_clientCertificate",
                 "accessToken": "accessToken",
+                "totalTimeoutMs": 3000,
+                "connectTimeoutMs": 2000,
+                "readTimeoutMs": 1000,
+                "rateLimitRetries": 5,
             }
         }
         api_secrets_file = "secrets.json"
@@ -62,6 +71,10 @@ class TestSecretsFileConfigurationLoader:
             "proxy_address": "sample_address",
             "proxy_username": "sample_username",
             "proxy_password": "sample_password",
+            "total_timeout_ms": None,
+            "connect_timeout_ms": None,
+            "read_timeout_ms": None,
+            "rate_limit_retries": None,
         }
 
         secrets_file_contents = {
@@ -94,6 +107,10 @@ class TestEnvironmentVariablesConfigurationLoader:
             "FBN_APP_NAME": "sample_applicationName",
             "FBN_CLIENT_CERTIFICATE": "sample_clientCertificate",
             "FBN_ACCESS_TOKEN": "accessToken",
+            "FBN_TOTAL_TIMEOUT_MS": "3000",
+            "FBN_CONNECT_TIMEOUT_MS": "2000",
+            "FBN_READ_TIMEOUT_MS": "1000",
+            "FBN_RATE_LIMIT_RETRIES": "5"
         }
         expected_config = {
             "token_url": "sample_tokenUrl",
@@ -108,6 +125,10 @@ class TestEnvironmentVariablesConfigurationLoader:
             "proxy_address": None,
             "proxy_username": None,
             "proxy_password": None,
+            "total_timeout_ms": 3000,
+            "connect_timeout_ms": 2000,
+            "read_timeout_ms": 1000,
+            "rate_limit_retries": 5,
         }
         with mock.patch.dict("os.environ", environment_variables, clear=True):
             config_loader = EnvironmentVariablesConfigurationLoader()
@@ -133,12 +154,30 @@ class TestEnvironmentVariablesConfigurationLoader:
             "proxy_address": "sample_address",
             "proxy_username": "sample_username",
             "proxy_password": "sample_password",
+            "total_timeout_ms": None,
+            "connect_timeout_ms": None,
+            "read_timeout_ms": None,
+            "rate_limit_retries": None,
         }
         with mock.patch.dict("os.environ", environment_variables, clear=True):
             config_loader = EnvironmentVariablesConfigurationLoader()
             result = config_loader.load_config()
             assert expected_config == result
 
+    @pytest.mark.parametrize("key, config_name",
+    [("FBN_TOTAL_TIMEOUT_MS", "total_timeout_ms"),
+     ("FBN_CONNECT_TIMEOUT_MS", "connect_timeout_ms"),
+     ("FBN_READ_TIMEOUT_MS", "read_timeout_ms"),
+     ("FBN_RATE_LIMIT_RETRIES", "rate_limit_retries")])
+    def test_load_config_throws_if_invalid_int_values(self, key, config_name):
+        environment_variables = {
+            key: "not-a-number"
+        }
+        with mock.patch.dict("os.environ", environment_variables, clear=True):
+            with pytest.raises(ValueError) as e:
+                config_loader = EnvironmentVariablesConfigurationLoader()
+                config_loader.load_config()
+            assert str(e.value) == f"invalid value for '{config_name}' - value must be an integer if set"
 
 class TestArgsConfigurationLoader:
     def test_load_config_gets_config_dict(self):
@@ -155,6 +194,10 @@ class TestArgsConfigurationLoader:
             "proxy_address": "sample_address",
             "proxy_username": "sample_username",
             "proxy_password": "sample_password",
+            "total_timeout_ms": 3000,
+            "connect_timeout_ms": 2000,
+            "read_timeout_ms": 1000,
+            "rate_limit_retries": 5,
         }
         expected_config = {
             "token_url": "sample_tokenUrl",
@@ -169,6 +212,10 @@ class TestArgsConfigurationLoader:
             "proxy_address": "sample_address",
             "proxy_username": "sample_username",
             "proxy_password": "sample_password",
+            "total_timeout_ms": 3000,
+            "connect_timeout_ms": 2000,
+            "read_timeout_ms": 1000,
+            "rate_limit_retries": 5,
         }
         config_loader = ArgsConfigurationLoader(**kwargs)
         result = config_loader.load_config()

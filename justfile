@@ -22,6 +22,7 @@ export FBN_CLIENT_ID := `echo ${FBN_CLIENT_ID:-client-id}`
 export FBN_CLIENT_SECRET := `echo ${FBN_CLIENT_SECRET:-client-secret}`
 export TEST_API_MODULE := `echo ${TEST_API_MODULE:-api.application_metadata_api}`
 export TEST_API := `echo ${TEST_API:-ApplicationMetadataApi}`
+export TEST_METHOD := `echo ${TEST_METHOD:-'list_access_controlled_resources('}`
 export GENERATE_API_TESTS := `echo ${GENERATE_API_TESTS:-false}`
 
 swagger_path := "./swagger.json"
@@ -72,10 +73,11 @@ add-tests:
     # rename to match values for the sdk being tested
     find {{justfile_directory()}}/generate/.output/sdk/test -type f -exec sed -i -e "s/TO_BE_REPLACED/${PACKAGE_NAME}/g" {} \;
 
-    # note these values won't work for the horizon sdk
-    # (it doesn't have this api)
+    # note the default values at the top of this justfile won't work for the horizon or luminesce sdk
+    # (they don't have this api/method)
     find {{justfile_directory()}}/generate/.output/sdk/test -type f -exec sed -i -e "s/TEST_API_MODULE/${TEST_API_MODULE}/g" {} \;
     find {{justfile_directory()}}/generate/.output/sdk/test -type f -exec sed -i -e "s/TEST_API/${TEST_API}/g" {} \;
+    find {{justfile_directory()}}/generate/.output/sdk/test -type f -exec sed -i -e "s/TEST_METHOD/${TEST_METHOD}/g" {} \;
 
 link-tests-cicd TARGET_DIR:
     mkdir -p {{TARGET_DIR}}/sdk/test/
@@ -87,6 +89,7 @@ link-tests-cicd TARGET_DIR:
     find {{justfile_directory()}}/test_sdk -type f -exec sed -i -e "s/TO_BE_REPLACED/${PLACEHOLDER_VALUE_FOR_TESTS}/g" {} \;
     find {{justfile_directory()}}/test_sdk -type f -exec sed -i -e "s/TEST_API_MODULE/${TEST_API_MODULE}/g" {} \;
     find {{justfile_directory()}}/test_sdk -type f -exec sed -i -e "s/TEST_API/${TEST_API}/g" {} \;
+    find {{justfile_directory()}}/test_sdk -type f -exec sed -i -e "s/TEST_METHOD/${TEST_METHOD}/g" {} \;
  
 setup-test-local:
     @just generate-local

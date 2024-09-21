@@ -56,7 +56,9 @@ import {{{packageName}}}
 
 ## Getting Started
 
-You'll need to provide some configuration to connect to the {{appName}} - see the articles about [short-lived access tokens](https://support.lusid.com/knowledgebase/article/KA-01654) and a [long-lived Personal Access Token](https://support.lusid.com/knowledgebase/article/KA-01774). This configuration can be provided using a secrets file or environment variables. 
+You'll need to provide some configuration to connect to the {{appName}} - see the articles about [short-lived access tokens](https://support.lusid.com/knowledgebase/article/KA-01654) and a [long-lived Personal Access Token](https://support.lusid.com/knowledgebase/article/KA-01774). This configuration can be provided using a secrets file or environment variables.
+
+For some configuration it is also possible to override the global configuration at the ApiClientFactory level, or at the request level. For the set of configuration which can be overridden, please see [ConfigurationOptions](sdk/{{packageName}}/extensions/configuration_options.py). For a code illustration of this configuration being overridden, please see the [example](#example).
 
 ### Environment variables
 
@@ -77,6 +79,18 @@ FBN_ACCESS_TOKEN
 ```
 
 You can send your requests to the {{appName}} via a proxy, by setting `FBN_PROXY_ADDRESS`. If your proxy has basic auth enabled, you must also set `FBN_PROXY_USERNAME` and `FBN_PROXY_PASSWORD`.
+
+Other optional configuration
+
+```bash
+# sdk client timeouts in milliseconds - a value of 0 means no timeout, otherwise timeout values must be a positive integer
+# please note - the chances of seeing a network issue increase with the duration of the request
+# for this reason, rather than increasing the timeout, it will be more reliable to use an alternate polling style endpoint where these exist
+FBN_TOTAL_TIMEOUT_MS # the default is 1800000 (30 minutes)
+FBN_CONNECT_TIMEOUT_MS # the default is 0 (no timeout)
+FBN_READ_TIMEOUT_MS # the default is 0 (no timeout)
+FBN_RATE_LIMIT_RETRIES # the default is 2
+```
 
 ### Secrets file
 
@@ -122,6 +136,23 @@ You can send your requests to the {{appName}} via a proxy, by adding a proxy sec
         "address":"<your-proxy-address>",
         "username":"<your-proxy-username>",
         "password":"<your-proxy-password>"
+    }
+}
+```
+
+Other optional configuration
+
+```javascript
+{
+    "api": 
+    {
+        // sdk client timeouts in milliseconds - a value of 0 means no timeout, otherwise timeout values must be a positive integer
+        // please note - the chances of seeing a network issue increase with the duration of the request
+        // for this reason, rather than increasing the timeout, it will be more reliable to use an alternate polling style endpoint where these exist
+        "totalTimeoutMs":<timeout-in-ms>, // the default is 1800000 (30 minutes)
+        "connectTimeoutMs":<timeout-in-ms>, // the default is 0 (no timeout)
+        "readTimeoutMs":<timeout-in-ms>, // the default is 0 (no timeout)
+        "rateLimitRetries":<retries-when-being-rate-limited> // the default is 2
     }
 }
 ```

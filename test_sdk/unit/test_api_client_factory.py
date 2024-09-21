@@ -87,6 +87,7 @@ class TestSyncApiClientFactory:
             tcp_keep_alive=True,
             socket_options=keep_alive_socket_options(),
             id_provider_response_handler=None,
+            opts=None,
         )
         args, kwargs = set_additional_api_client_headers_mock.call_args
         assert isinstance(args[0], SyncApiClient)
@@ -114,6 +115,7 @@ class TestSyncApiClientFactory:
             tcp_keep_alive=True,
             socket_options=socket_options,
             id_provider_response_handler=None,
+            opts=None,
         )
         assert (
             {
@@ -145,6 +147,7 @@ class TestAsyncApiClientFactory:
             tcp_keep_alive=True,
             socket_options=keep_alive_socket_options(),
             id_provider_response_handler=None,
+            opts=None,
         )
         args, kwargs = set_additional_api_client_headers_mock.call_args
         assert isinstance(args[0], AsyncApiClient)

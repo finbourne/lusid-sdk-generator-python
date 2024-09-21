@@ -50,6 +50,9 @@
         },
         "extensions/file_access_token.mustache": {
             "destinationFilename": "${PACKAGE_NAME}/extensions/file_access_token.py"
+        },
+        "extensions/configuration_options.mustache": {
+            "destinationFilename": "${PACKAGE_NAME}/extensions/configuration_options.py"
         }
     }
 }
