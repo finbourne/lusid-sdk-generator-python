@@ -70,7 +70,7 @@ class {{#operations}}Test{{classname}}(unittest.IsolatedAsyncioTestCase):
 
                 if len({{paramName}}) >= minLength:
                     break
-                if count > 100:
+                if count > 10000:
                     raise Exception("unable to generate random value for parameter {{paramName}} which matches the constraints")
             {{/vendorExtensions.x-regex}}
             {{^vendorExtensions.x-regex}}
