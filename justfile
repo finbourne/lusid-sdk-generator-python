@@ -144,6 +144,8 @@ generate-cicd TARGET_DIR FLAG="":
     # Basic check if file exists
     if [ -f "./generate/templates/description.{{APPLICATION_NAME}}.mustache" ]; then \
         cp ./generate/templates/description.{{APPLICATION_NAME}}.mustache ./generate/templates/description.mustache; \
+    else \
+        echo "FINBOURNE Technology {{APPLICATION_NAME}}-python-sdk" ./generate/templates/description.mustache; \
     fi
     ./generate/generate.sh ./generate ./generate/.output {{swagger_path}} .config.json
     rm -f generate/.output/.openapi-generator-ignore
@@ -219,3 +221,5 @@ make-import-fix:
     {{justfile_directory()}}/generate/.output/sdk/finbourne_access/models/selector_definition.py \
     "from finbourne_access.models.policy_selector_definition import PolicySelectorDefinition" \
     "SelectorDefinition.update_forward_refs()"
+make-blank-description-template:
+    bash {{justfile_directory()}}/generate/fix-files-for-one-of.sh {{justfile_directory()}} ${PACKAGE_NAME} ${APPLICATION_NAME}
