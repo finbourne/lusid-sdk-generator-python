@@ -137,7 +137,6 @@ generate TARGET_DIR FLAG="":
 
 # Generate an SDK from a swagger.json and copy the output to the TARGET_DIR
 generate-cicd TARGET_DIR FLAG="":
-    set -ex
     mkdir -p {{TARGET_DIR}}
     mkdir -p ./generate/.output
     envsubst < generate/config-template.json > generate/.config.json
@@ -148,7 +147,6 @@ generate-cicd TARGET_DIR FLAG="":
     else
         echo "No description template for {{ APPLICATION_NAME }} ... skipping."
     fi
-
     ./generate/generate.sh ./generate ./generate/.output {{swagger_path}} .config.json
     rm -f generate/.output/.openapi-generator-ignore
 
