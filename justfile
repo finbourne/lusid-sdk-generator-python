@@ -145,7 +145,7 @@ generate-cicd TARGET_DIR FLAG="":
     if [ -f "./generate/templates/description.{{APPLICATION_NAME}}.mustache" ]; then \
         cp ./generate/templates/description.{{APPLICATION_NAME}}.mustache ./generate/templates/description.mustache; \
     else \
-        echo "FINBOURNE Technology {{APPLICATION_NAME}}-python-sdk" ./generate/templates/description.mustache; \
+        echo "FINBOURNE Technology {{APPLICATION_NAME}}-python-sdk" > ./generate/templates/description.mustache; \
     fi
     ./generate/generate.sh ./generate ./generate/.output {{swagger_path}} .config.json
     rm -f generate/.output/.openapi-generator-ignore
