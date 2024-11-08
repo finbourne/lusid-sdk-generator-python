@@ -142,11 +142,7 @@ generate-cicd TARGET_DIR FLAG="":
     envsubst < generate/config-template.json > generate/.config.json
     cp ./generate/.openapi-generator-ignore ./generate/.output/.openapi-generator-ignore
     # Basic check if file exists
-    if [ -f "./generate/templates/description.{{APPLICATION_NAME}}.mustache" ]; then
-        cp ./generate/templates/description.{{APPLICATION_NAME}}.mustache ./generate/templates/description.mustache
-    else
-        echo "No description template for {{ APPLICATION_NAME }} ... skipping."
-    fi
+    if [ -f "./generate/templates/description.{{APPLICATION_NAME}}.mustache" ]; then cp ./generate/templates/description.{{APPLICATION_NAME}}.mustache ./generate/templates/description.mustache; fi
     ./generate/generate.sh ./generate ./generate/.output {{swagger_path}} .config.json
     rm -f generate/.output/.openapi-generator-ignore
 
