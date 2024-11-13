@@ -1,31 +1,30 @@
 ```python
-{{#asyncio}}import asyncio{{/asyncio}}
 from {{{packageName}}}.exceptions import ApiException
 from {{{packageName}}}.extensions.configuration_options import ConfigurationOptions
 from {{{modelPackage}}} import *
 from pprint import pprint
 from {{packageName}} import (
-    ApiClientFactory,
+    SyncApiClientFactory,
     {{{classname}}}
 )
 
-{{#asyncio}}async {{/asyncio}}def main():
+def main():
 
     with open("secrets.json", "w") as file:
         file.write('''
-{
-    "api":
     {
-        "tokenUrl":"<your-token-url>",
-        "{{#lambda.camelcase}}{{application}}{{/lambda.camelcase}}Url":"https://<your-domain>.lusid.com{{basePathWithoutHost}}",
-        "username":"<your-username>",
-        "password":"<your-password>",
-        "clientId":"<your-client-id>",
-        "clientSecret":"<your-client-secret>"
-    }
-}''')
+        "api":
+        {
+            "tokenUrl":"<your-token-url>",
+            "{{#lambda.camelcase}}{{application}}{{/lambda.camelcase}}Url":"https://<your-domain>.lusid.com{{basePathWithoutHost}}",
+            "username":"<your-username>",
+            "password":"<your-password>",
+            "clientId":"<your-client-id>",
+            "clientSecret":"<your-client-secret>"
+        }
+    }''')
 
-    # Use the {{packageName}} ApiClientFactory to build Api instances with a configured api client
+    # Use the {{packageName}} SyncApiClientFactory to build Api instances with a configured api client
     # By default this will read config from environment variables
     # Then from a secrets.json file found in the current working directory
 
@@ -34,36 +33,36 @@ from {{packageName}} import (
     # opts.total_timeout_ms = 30_000
 
     # uncomment the below to use an api client factory with overrides
-    # api_client_factory = ApiClientFactory(opts=opts)
+    # api_client_factory = SyncApiClientFactory(opts=opts)
 
-    api_client_factory = ApiClientFactory()
+    api_client_factory = SyncApiClientFactory()
 
-    # Enter a context with an instance of the ApiClientFactory to ensure the connection pool is closed after use
-    {{#asyncio}}async {{/asyncio}}with api_client_factory:
-        # Create an instance of the API class
-        api_instance = api_client_factory.build({{{classname}}})
-        {{#allParams}}
-        {{^isModel}}
-        {{paramName}} = {{{example}}} # {{{dataType}}} | {{{description}}}{{^required}} (optional){{/required}}{{#defaultValue}} (default to {{{.}}}){{/defaultValue}}{{/isModel}}{{#isModel}}
-        # Objects can be created either via the class constructor, or using the 'from_dict' or 'from_json' methods
-        # Change the lines below to switch approach
-        # {{paramName}} = {{{dataType}}}.from_json("")
-        # {{paramName}} = {{{dataType}}}.from_dict({})
-        {{paramName}} = {{{dataType}}}(){{/isModel}}
-        {{/allParams}}
+    # Enter a context with an instance of the SyncApiClientFactory to ensure the connection pool is closed after use
+    
+    # Create an instance of the API class
+    api_instance = api_client_factory.build({{{classname}}})
+    {{#allParams}}
+    {{^isModel}}
+    {{paramName}} = {{{example}}} # {{{dataType}}} | {{{description}}}{{^required}} (optional){{/required}}{{#defaultValue}} (default to {{{.}}}){{/defaultValue}}{{/isModel}}{{#isModel}}
+    # Objects can be created either via the class constructor, or using the 'from_dict' or 'from_json' methods
+    # Change the lines below to switch approach
+    # {{paramName}} = {{{dataType}}}.from_json("")
+    # {{paramName}} = {{{dataType}}}.from_dict({})
+    {{paramName}} = {{{dataType}}}(){{/isModel}}
+    {{/allParams}}
 
-        try:
-            # uncomment the below to set overrides at the request level
-            # {{#returnType}}api_response = {{/returnType}}{{#asyncio}}await {{/asyncio}}api_instance.{{{operationId}}}({{#allParams}}{{#required}}{{paramName}}{{/required}}{{^required}}{{paramName}}={{paramName}}{{/required}}, {{/allParams}}opts=opts)
+    try:
+        # uncomment the below to set overrides at the request level
+        # {{#returnType}}api_response = {{/returnType}} api_instance.{{{operationId}}}({{#allParams}}{{#required}}{{paramName}}{{/required}}{{^required}}{{paramName}}={{paramName}}{{/required}}, {{/allParams}}opts=opts)
 
-            {{#summary}}
-            # {{{.}}}
-            {{/summary}}
-            {{#returnType}}api_response = {{/returnType}}{{#asyncio}}await {{/asyncio}}api_instance.{{{operationId}}}({{#allParams}}{{#required}}{{paramName}}{{/required}}{{^required}}{{paramName}}={{paramName}}{{/required}}{{^-last}}, {{/-last}}{{/allParams}}){{#returnType}}
-            pprint(api_response)
-            {{/returnType}}
-        except ApiException as e:
-            print("Exception when calling {{classname}}->{{operationId}}: %s\n" % e)
+        {{#summary}}
+        # {{{.}}}
+        {{/summary}}
+        {{#returnType}}api_response = {{/returnType}} api_instance.{{{operationId}}}({{#allParams}}{{#required}}{{paramName}}{{/required}}{{^required}}{{paramName}}={{paramName}}{{/required}}{{^-last}}, {{/-last}}{{/allParams}}){{#returnType}}
+        pprint(api_response)
+        {{/returnType}}
+    except ApiException as e:
+        print("Exception when calling {{classname}}->{{operationId}}: %s\n" % e)
 
-{{#asyncio}}asyncio.run(main()){{/asyncio}}{{^asyncio}}main(){{/asyncio}}
+main()
 ```
