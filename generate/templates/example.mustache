@@ -61,6 +61,7 @@ def main():
         {{#returnType}}api_response = {{/returnType}} api_instance.{{{operationId}}}({{#allParams}}{{#required}}{{paramName}}{{/required}}{{^required}}{{paramName}}={{paramName}}{{/required}}{{^-last}}, {{/-last}}{{/allParams}}){{#returnType}}
         pprint(api_response)
         {{/returnType}}
+
     except ApiException as e:
         print("Exception when calling {{classname}}->{{operationId}}: %s\n" % e)
 
