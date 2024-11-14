@@ -142,9 +142,9 @@ generate-cicd TARGET_DIR FLAG="":
     envsubst < generate/config-template.json > generate/.config.json
     cp ./generate/.openapi-generator-ignore ./generate/.output/.openapi-generator-ignore
     # Basic check if file exists
-    if [ -f "./generate/templates/description.{{APPLICATION_NAME}}.mustache" ]; then
-        cp ./generate/templates/description.{{APPLICATION_NAME}}.mustache ./generate/templates/description.mustache
-    else
+    if [ -f "./generate/templates/description.{{APPLICATION_NAME}}.mustache" ]; then \
+        cp ./generate/templates/description.{{APPLICATION_NAME}}.mustache ./generate/templates/description.mustache;
+    else \
         echo "FINBOURNE Technology candela-python-sdk" > ./generate/templates/description.mustache;
     fi
 
