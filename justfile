@@ -45,7 +45,12 @@ generate-local FLAG="":
     # generate the sdk
     rm -r {{justfile_directory()}}/generate/.output || true # ensure a clean output dir before starting
     envsubst < generate/config-template.json > generate/.config.json
-    cp generate/templates/description.{{APPLICATION_NAME}}.mustache generate/templates/description.mustache
+    # Basic check if file exists
+    if [ -f "./generate/templates/description.{{APPLICATION_NAME}}.mustache" ]; then \
+        cp ./generate/templates/description.{{APPLICATION_NAME}}.mustache ./generate/templates/description.mustache; \
+    else \
+        echo "FINBOURNE Technology candela-python-sdk" > ./generate/templates/description.mustache; \
+    fi
     docker run \
         -e JAVA_OPTS="-Dlog.level=error -Xmx6g" \
         -e PACKAGE_VERSION=${PACKAGE_VERSION} \
