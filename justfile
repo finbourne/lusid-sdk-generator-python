@@ -49,7 +49,7 @@ generate-local FLAG="":
     if [ -f "./generate/templates/description.{{APPLICATION_NAME}}.mustache" ]; then \
         cp ./generate/templates/description.{{APPLICATION_NAME}}.mustache ./generate/templates/description.mustache; \
     else \
-        echo "FINBOURNE Technology candela-python-sdk" > ./generate/templates/description.mustache; \
+        echo "[INTERNAL] FINBOURNE Technology {{APPLICATION_NAME}} SDK" > ./generate/templates/description.mustache; \
     fi
     docker run \
         -e JAVA_OPTS="-Dlog.level=error -Xmx6g" \
@@ -150,7 +150,7 @@ generate-cicd TARGET_DIR FLAG="":
     if [ -f "./generate/templates/description.{{APPLICATION_NAME}}.mustache" ]; then \
         cp ./generate/templates/description.{{APPLICATION_NAME}}.mustache ./generate/templates/description.mustache;
     else \
-        echo "FINBOURNE Technology candela-python-sdk" > ./generate/templates/description.mustache;
+        echo "[INTERNAL] FINBOURNE Technology {{APPLICATION_NAME}} SDK" > ./generate/templates/description.mustache; \
     fi
 
     ./generate/generate.sh ./generate ./generate/.output {{swagger_path}} .config.json
