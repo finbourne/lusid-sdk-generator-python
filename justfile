@@ -50,6 +50,7 @@ generate-local FLAG="":
         cp ./generate/templates/description.{{APPLICATION_NAME}}.mustache ./generate/templates/description.mustache; \
     else \
         echo "[INTERNAL] FINBOURNE Technology {{APPLICATION_NAME}} SDK" > ./generate/templates/description.mustache; \
+        echo "[INFO] No description template found for {{APPLICATION_NAME}} - if this is an external facing SDK - add ./generate/templates/description.{{APPLICATION_NAME}}.mustache to this project ASAP";\
     fi
     docker run \
         -e JAVA_OPTS="-Dlog.level=error -Xmx6g" \
@@ -151,6 +152,7 @@ generate-cicd TARGET_DIR FLAG="":
         cp ./generate/templates/description.{{APPLICATION_NAME}}.mustache ./generate/templates/description.mustache;
     else \
         echo "[INTERNAL] FINBOURNE Technology {{APPLICATION_NAME}} SDK" > ./generate/templates/description.mustache; \
+        echo "[INFO] No description template found for {{APPLICATION_NAME}} - if this is an external facing SDK - add ./generate/templates/description.{{APPLICATION_NAME}}.mustache to this project ASAP";\
     fi
 
     ./generate/generate.sh ./generate ./generate/.output {{swagger_path}} .config.json
