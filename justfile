@@ -149,7 +149,7 @@ generate-cicd TARGET_DIR FLAG="":
     cp ./generate/.openapi-generator-ignore ./generate/.output/.openapi-generator-ignore
     # Basic check if file exists
     if [ -f "./generate/templates/description.{{APPLICATION_NAME}}.mustache" ]; then \
-        cp ./generate/templates/description.{{APPLICATION_NAME}}.mustache ./generate/templates/description.mustache;
+        cp ./generate/templates/description.{{APPLICATION_NAME}}.mustache ./generate/templates/description.mustache; \
     else \
         echo "[INTERNAL] FINBOURNE Technology {{APPLICATION_NAME}} SDK" > ./generate/templates/description.mustache; \
         echo "[INFO] No description template found for {{APPLICATION_NAME}} - if this is an external facing SDK - add ./generate/templates/description.{{APPLICATION_NAME}}.mustache to this project ASAP";\
