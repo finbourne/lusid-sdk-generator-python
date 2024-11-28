@@ -12,12 +12,12 @@
         },
         {
             "file": "fail",
-            "find": "'Fail', 'HealthCheck', 'LuminesceView', 'SchedulerJob', 'Sleep'",
+            "find": "'Fail', 'GroupReconciliation', 'HealthCheck', 'LuminesceView', 'SchedulerJob', 'Sleep'",
             "replace": "'Fail'"
         },
         {
             "file": "fail_response",
-            "find": "'Fail', 'HealthCheck', 'LuminesceView', 'SchedulerJob', 'Sleep'",
+            "find": "'Fail', 'GroupReconciliation', 'HealthCheck', 'LuminesceView', 'SchedulerJob', 'Sleep'",
             "replace": "'Fail'"
         }
     ]
