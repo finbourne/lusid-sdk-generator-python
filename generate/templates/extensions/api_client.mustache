@@ -65,10 +65,10 @@ class SyncApiClient:
         self.pool_threads = pool_threads
 
         self.rest_client = rest.RESTClientObject(configuration)
-        package_version = version("{{packageName}}-sdk")
+        package_version = version("{{packageName}}")
         self.default_headers = {
             "X-LUSID-SDK-Language": "Python",
-            "X-LUSID-SDK-Version":  version("{{packageName}}-sdk")
+            "X-LUSID-SDK-Version":  version("{{packageName}}")
         }
         if header_name is not None:
             self.default_headers[header_name] = header_value
