@@ -146,6 +146,18 @@ class {{classname}}({{#parent}}{{{.}}}{{/parent}}{{^parent}}BaseModel{{/parent}}
         else:
             return instance
 
+    def __str__(self):
+        """For `print` and `pprint`"""
+        return pprint.pformat(self.dict(by_alias=False))
+
+    def __repr__(self):
+        """For `print` and `pprint`"""
+        return self.to_str()
+
+    def to_str(self) -> str:
+        """Returns the string representation of the model using alias"""
+        return pprint.pformat(self.dict(by_alias=True))
+
     def to_json(self) -> str:
         """Returns the JSON representation of the actual instance"""
         if self.actual_instance is None:
@@ -168,9 +180,6 @@ class {{classname}}({{#parent}}{{{.}}}{{/parent}}{{^parent}}BaseModel{{/parent}}
         else:
             return json.dumps(self.actual_instance)
 
-    def to_str(self) -> str:
-        """Returns the string representation of the actual instance"""
-        return pprint.pformat(self.dict())
 
 {{#vendorExtensions.x-py-postponed-model-imports.size}}
 {{#vendorExtensions.x-py-postponed-model-imports}}
