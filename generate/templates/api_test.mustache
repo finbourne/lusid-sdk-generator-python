@@ -45,6 +45,34 @@ class {{#operations}}Test{{classname}}(unittest.IsolatedAsyncioTestCase):
         while numRuns < numExamples:
             numRuns += 1
             {{#allParams}}
+            {{#vendorExtensions.x-regex}}
+            minLength = {{#schema.minLength}}{{schema.minLength}}{{/schema.minLength}}{{^schema.minLength}}0{{/schema.minLength}}
+            maxLength = {{#schema.maxLength}}{{schema.maxLength}}{{/schema.maxLength}}{{^schema.maxLength}}10{{/schema.maxLength}}
+            # the following is necessary to avoid url becoming longer than acceptable length
+            if maxLength > 50:
+                maxLength = 50
+            xegerObj = Xeger(limit=maxLength)
+            count = 0
+            while True:
+                count += 1
+                regex = r"{{{vendorExtensions.x-regex}}}"
+                # The regex map is required due to a limitation of Xeger library where it fails 
+                # correctly generate the string from the regex
+                regex_map = {
+                    r'^(?=.*[a-zA-Z])[\w][\w +-]{2,100}$': "official-portfolios-read-only",
+                    r'^[a-zA-Z0-9\\+/]*={0,3}$': "L=="
+                }
+
+                {{paramName}}: {{{dataType}}} = xegerObj.xeger(r"{{{vendorExtensions.x-regex}}}")
+
+                if regex in regex_map:
+                    {{paramName}} = regex_map[regex]
+
+                if len({{paramName}}) >= minLength:
+                    break
+                if count > 10000:
+                    raise Exception("unable to generate random value for parameter {{paramName}} which matches the constraints")
+            {{/vendorExtensions.x-regex}}
             {{^vendorExtensions.x-regex}}
             {{#isPrimitiveType}}
             {{#isUuid}}
