@@ -94,10 +94,10 @@ link-tests-cicd TARGET_DIR:
 
     # these test files have been copied from the lusid sdk tests
     # rename to match values for the sdk being tested
-    find {{justfile_directory()}}/test_sdk -type f -exec sed -i -e "s/TO_BE_REPLACED/${PLACEHOLDER_VALUE_FOR_TESTS}/g" {} \;
-    find {{justfile_directory()}}/test_sdk -type f -exec sed -i -e "s/TEST_API_MODULE/${TEST_API_MODULE}/g" {} \;
-    find {{justfile_directory()}}/test_sdk -type f -exec sed -i -e "s/TEST_API/${TEST_API}/g" {} \;
-    find {{justfile_directory()}}/test_sdk -type f -exec sed -i -e "s/TEST_METHOD/${TEST_METHOD}/g" {} \;
+    find {{TARGET_DIR}}/sdk/test/app -type f -exec sed -i -e "s/TO_BE_REPLACED/${PLACEHOLDER_VALUE_FOR_TESTS}/g" {} \;
+    find {{TARGET_DIR}}/sdk/test/app -type f -exec sed -i -e "s/TEST_API_MODULE/${TEST_API_MODULE}/g" {} \;
+    find {{TARGET_DIR}}/sdk/test/app -type f -exec sed -i -e "s/TEST_API/${TEST_API}/g" {} \;
+    find {{TARGET_DIR}}/sdk/test/app -type f -exec sed -i -e "s/TEST_METHOD/${TEST_METHOD}/g" {} \;
  
 setup-test-local:
     @just generate-local
