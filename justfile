@@ -5,10 +5,9 @@
 #    PROJECT_NAME
 #    PACKAGE_VERSION
 #    PYPI_PACKAGE_LOCATION
-
-export APPLICATION_NAME := `echo ${APPLICATION_NAME:-lusid}`
-export PACKAGE_NAME := `echo ${PACKAGE_NAME:-lusid}`
-export PROJECT_NAME := `echo ${PROJECT_NAME:-lusid-sdk}`
+export APPLICATION_NAME := `echo ${APPLICATION_NAME:-access}`
+export PACKAGE_NAME := `echo ${PACKAGE_NAME:-finbourne_access}`
+export PROJECT_NAME := `echo ${PROJECT_NAME:-access-sdk}`
 export PACKAGE_VERSION := `echo ${PACKAGE_VERSION:-2.0.0}`
 
 export PYPI_PACKAGE_LOCATION := `echo ${PYPI_PACKAGE_LOCATION:-~/.pypi/packages}`
@@ -23,7 +22,7 @@ export FBN_CLIENT_SECRET := `echo ${FBN_CLIENT_SECRET:-client-secret}`
 export TEST_API_MODULE := `echo ${TEST_API_MODULE:-api.application_metadata_api}`
 export TEST_API := `echo ${TEST_API:-ApplicationMetadataApi}`
 export TEST_METHOD := `echo ${TEST_METHOD:-'list_access_controlled_resources('}`
-export GENERATE_API_TESTS := `echo ${GENERATE_API_TESTS:-false}`
+export GENERATE_API_TESTS := `echo ${GENERATE_API_TESTS:-true}`
 
 swagger_path := "./swagger.json"
 
@@ -74,9 +73,9 @@ generate-local FLAG="":
     if [ "{{APPLICATION_NAME}}" = "access" ]; then just make-import-fix; fi
 
 add-tests:
-    mkdir -p {{justfile_directory()}}/generate/.output/sdk/test/
-    rm -rf {{justfile_directory()}}/generate/.output/sdk/test/*
-    cp -R {{justfile_directory()}}/test_sdk/* {{justfile_directory()}}/generate/.output/sdk/test
+    mkdir -p {{justfile_directory()}}/generate/.output/sdk/test/app
+    rm -rf {{justfile_directory()}}/generate/.output/sdk/test/app/*
+    cp -R {{justfile_directory()}}/test_sdk/* {{justfile_directory()}}/generate/.output/sdk/test/app
 
     # these test files have been copied from the lusid sdk tests
     # rename to match values for the sdk being tested
@@ -89,9 +88,9 @@ add-tests:
     find {{justfile_directory()}}/generate/.output/sdk/test -type f -exec sed -i -e "s/TEST_METHOD/${TEST_METHOD}/g" {} \;
 
 link-tests-cicd TARGET_DIR:
-    mkdir -p {{TARGET_DIR}}/sdk/test/
-    rm -rf {{TARGET_DIR}}/sdk/test/*
-    ln -s {{justfile_directory()}}/test_sdk/* {{TARGET_DIR}}/sdk/test
+    mkdir -p {{TARGET_DIR}}/sdk/test/app
+    rm -rf {{TARGET_DIR}}/sdk/test/app/*
+    cp -R {{justfile_directory()}}/test_sdk/* {{TARGET_DIR}}/sdk/test/app
 
     # these test files have been copied from the lusid sdk tests
     # rename to match values for the sdk being tested
