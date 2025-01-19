@@ -5,6 +5,7 @@
 from typing import List, Dict
 import unittest
 import json
+import datetime
 from xeger import Xeger
 from {{modelPackage}} import *
 import os
@@ -22,7 +23,7 @@ class {{#operations}}Test{{classname}}(unittest.IsolatedAsyncioTestCase):
         if "BASE_URL" in os.environ:
             api_url = os.environ["BASE_URL"]
         else:
-            api_url = "http://localhost:5000"
+            api_url = "http://localhost:5000/honeycomb"
         config_loaders = [
             ArgsConfigurationLoader(api_url=api_url, access_token="UNUSED")
         ]
@@ -83,7 +84,9 @@ class {{#operations}}Test{{classname}}(unittest.IsolatedAsyncioTestCase):
                 {{paramName}}: {{{dataType}}} = {{{example}}}
             {{/isUuid}}
             {{^isUuid}}
-            {{paramName}}: {{{dataType}}} = {{{example}}}
+            {{#isQueryParam}}# isQueryParam {{/isQueryParam}}
+            {{#isString}}# is string{{/isString}}
+            {{paramName}}: {{{dataType}}} = {{^isQueryParam}}{{#isString}}"""{{/isString}}{{/isQueryParam}}{{{example}}}{{^isQueryParam}}{{#isString}}"""{{/isString}}{{/isQueryParam}}
             {{/isUuid}}
             {{/isPrimitiveType}}
             {{^isPrimitiveType}}
@@ -111,9 +114,25 @@ class {{#operations}}Test{{classname}}(unittest.IsolatedAsyncioTestCase):
             {{/content}}
             {{^content}}
             {{#isArray}}
-            {{paramName}}: {{{dataType}}} = {{{example}}}{{/isArray}}
+            # isArray
+            {{paramName}}: {{{dataType}}} =  {{{example}}}
+            {{/isArray}}
             {{^isArray}}
-            {{paramName}}: {{{dataType}}} = json.loads("""{{{example}}}"""){{/isArray}}
+            # ^isArray
+            {{#isEnumRef}}
+            # isEnumRef
+            {{paramName}}: {{{dataType}}} = {{{schema.example}}}
+            {{/isEnumRef}}
+            {{^isEnumRef}}
+            {{#isExplode}}
+            # isExplode
+            {{paramName}}: {{{dataType}}} = {{{example}}}
+            {{/isExplode}}
+            {{^isExplode}}
+            {{paramName}}: {{{dataType}}} = json.loads("""{{{example}}}""")
+            {{/isExplode}}
+            {{/isEnumRef}}
+            {{/isArray}}
             {{/content}}
             {{/isPrimitiveType}}
             {{/vendorExtensions.x-regex}}
