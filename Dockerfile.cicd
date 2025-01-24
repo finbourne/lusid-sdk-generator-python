@@ -11,7 +11,7 @@ RUN apt install -y build-essential zlib1g-dev libncurses5-dev libgdbm-dev libnss
 # Compiling Python from source
 RUN curl -O https://www.python.org/ftp/python/3.8.2/Python-3.8.2.tar.xz
 RUN tar -xf Python-3.8.2.tar.xz
-RUN cd Python-3.8.2 && ./configure && make -j $(nproc) && make install && ln -s $(which python3.8) /usr/bin/python3
+RUN cd Python-3.8.2 && ./configure --enable-optimizations --enable-loadable-sqlite-extensions && make -j $(nproc) && make install && ln -s $(which python3.8) /usr/bin/python3
 
 # Check Python install & update pip
 RUN python3.8 -m pip install --upgrade pip
