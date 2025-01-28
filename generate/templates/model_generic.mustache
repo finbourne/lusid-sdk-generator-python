@@ -5,7 +5,7 @@ import json
 
 {{#vendorExtensions.x-py-datetime-imports}}{{#-first}}from datetime import{{/-first}} {{{.}}}{{^-last}},{{/-last}}{{/vendorExtensions.x-py-datetime-imports}}
 {{#vendorExtensions.x-py-typing-imports}}{{#-first}}from typing import{{/-first}} {{{.}}}{{^-last}},{{/-last}}{{/vendorExtensions.x-py-typing-imports}}
-{{#vendorExtensions.x-py-pydantic-imports}}{{#-first}}from pydantic.v1 import{{/-first}} {{{.}}}{{^-last}},{{/-last}}{{/vendorExtensions.x-py-pydantic-imports}}, Field
+{{#vendorExtensions.x-py-pydantic-imports}}{{#-first}}from pydantic.v1 import{{/-first}} {{{.}}}{{^-last}},{{/-last}}{{/vendorExtensions.x-py-pydantic-imports}}, constr, Field
 {{#vendorExtensions.x-py-model-imports}}
 {{{.}}}
 {{/vendorExtensions.x-py-model-imports}}
@@ -19,14 +19,14 @@ class {{classname}}({{#parent}}{{{.}}}{{/parent}}{{^parent}}BaseModel{{/parent}}
     """
     {{#description}}{{{description}}}  # noqa: E501{{/description}}{{^description}}{{{classname}}}{{/description}}
     """
-{{#vars}}
+    {{#vars}}
     {{^isString}}
     {{name}}: {{{vendorExtensions.x-py-typing}}}
     {{/isString}}
     {{#isString}}
     {{name}}:  {{^required}}Optional[{{/required}}constr(strict=True){{^required}}]{{/required}} = Field({{#required}}...{{/required}}{{^required}}None{{/required}},alias="{{baseName}}"{{#description}}, description="{{description}}"{{/description}}) 
     {{/isString}}
-{{/vars}}
+    {{/vars}}
 {{#isAdditionalPropertiesTrue}}
     additional_properties: Dict[str, Any] = {}
 {{/isAdditionalPropertiesTrue}}
