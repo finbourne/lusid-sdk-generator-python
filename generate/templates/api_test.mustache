@@ -42,6 +42,9 @@ class {{#operations}}Test{{classname}}(unittest.IsolatedAsyncioTestCase):
     @pytest.mark.asyncio
     async def test_{{operationId}}(self) -> None:
 
+        if "{{vendorExtensions.x-fbn-apistatus}}" == "Experimental":
+            return
+
         requestBodyByteArray: bytearray = "SomeContentForRequestBody"
         numRuns = 0
         numExamples = 1
