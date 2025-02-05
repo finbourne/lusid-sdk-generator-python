@@ -23,7 +23,7 @@ class {{#operations}}Test{{classname}}(unittest.IsolatedAsyncioTestCase):
         if "BASE_URL" in os.environ:
             api_url = os.environ["BASE_URL"]
         else:
-            api_url = "http://localhost:5000/honeycomb"
+            api_url = "http://localhost:5000"
         config_loaders = [
             ArgsConfigurationLoader(api_url=api_url, access_token="UNUSED")
         ]
