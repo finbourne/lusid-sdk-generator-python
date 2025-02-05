@@ -106,6 +106,9 @@ class {{#operations}}Test{{classname}}(unittest.IsolatedAsyncioTestCase):
             spec_filepath = os.environ['OPENAPI_SPEC_PATH']
             with open(spec_filepath) as file:
                 openapiSpecJson = file.read()
+
+            print("spec_filepath="+spec_filepath)
+            print(openapiSpecJson)
             
             method = "{{httpMethod}}".replace("Http", "").lower()
             jsonContent = json.loads(openapiSpecJson)
