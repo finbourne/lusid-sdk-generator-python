@@ -5,7 +5,6 @@
 from typing import List, Dict
 import unittest
 import json
-import datetime
 from xeger import Xeger
 from {{modelPackage}} import *
 import os
@@ -89,9 +88,6 @@ class {{#operations}}Test{{classname}}(unittest.IsolatedAsyncioTestCase):
                 {{paramName}}: {{{dataType}}} = {{{example}}}
             {{/isUuid}}
             {{^isUuid}}
-            {{#isQueryParam}}# isQueryParam {{/isQueryParam}}
-            {{#isString}}# is string{{/isString}}
-            {{#isByteArray}}# isByteArray{{/isByteArray}}
             {{^isByteArray}}
             {{paramName}}: {{{dataType}}} = {{^isQueryParam}}{{#isString}}"""{{/isString}}{{/isQueryParam}}{{{example}}}{{^isQueryParam}}{{#isString}}"""{{/isString}}{{/isQueryParam}}
             {{/isByteArray}}
@@ -106,9 +102,7 @@ class {{#operations}}Test{{classname}}(unittest.IsolatedAsyncioTestCase):
             spec_filepath = os.environ['OPENAPI_SPEC_PATH']
             with open(spec_filepath) as file:
                 openapiSpecJson = file.read()
-
-            print("spec_filepath="+spec_filepath)
-            
+          
             method = "{{httpMethod}}".replace("Http", "").lower()
             jsonContent = json.loads(openapiSpecJson)
             jsonContent = jsonContent["paths"]["{{path}}"][method]["requestBody"]["content"]["application/json"]
@@ -128,18 +122,14 @@ class {{#operations}}Test{{classname}}(unittest.IsolatedAsyncioTestCase):
             {{/content}}
             {{^content}}
             {{#isArray}}
-            # isArray
             {{paramName}}: {{{dataType}}} =  {{{example}}}
             {{/isArray}}
             {{^isArray}}
-            # ^isArray
             {{#isEnumRef}}
-            # isEnumRef
             {{paramName}}: {{{dataType}}} = {{{schema.example}}}
             {{/isEnumRef}}
             {{^isEnumRef}}
             {{#isExplode}}
-            # isExplode
             {{paramName}}: {{{dataType}}} = {{{example}}}
             {{/isExplode}}
             {{^isExplode}}
@@ -151,7 +141,6 @@ class {{#operations}}Test{{classname}}(unittest.IsolatedAsyncioTestCase):
             {{/isPrimitiveType}}
             {{/vendorExtensions.x-regex}}
             {{/allParams}}
-            
             {{#returnType}}response = {{/returnType}}await self.api.{{operationId}}({{#allParams}}{{paramName}}{{^-last}}, {{/-last}}{{/allParams}})
             {{#returnType}}
             assert(response is not None)
