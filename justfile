@@ -83,9 +83,9 @@ add-tests:
 
     # note the default values at the top of this justfile won't work for the horizon or luminesce sdk
     # (they don't have this api/method)
-    find {{justfile_directory()}}/generate/.output/sdk/test -type f -exec sed -i -e "s/TEST_API_MODULE/${TEST_API_MODULE}/g" {} \;
-    find {{justfile_directory()}}/generate/.output/sdk/test -type f -exec sed -i -e "s/TEST_API/${TEST_API}/g" {} \;
-    find {{justfile_directory()}}/generate/.output/sdk/test -type f -exec sed -i -e "s/TEST_METHOD/${TEST_METHOD}/g" {} \;
+    find {{justfile_directory()}}/generate/.output/sdk/test/app -type f -exec sed -i -e "s/TEST_API_MODULE/${TEST_API_MODULE}/g" {} \;
+    find {{justfile_directory()}}/generate/.output/sdk/test/app -type f -exec sed -i -e "s/TEST_API/${TEST_API}/g" {} \;
+    find {{justfile_directory()}}/generate/.output/sdk/test/app -type f -exec sed -i -e "s/TEST_METHOD/${TEST_METHOD}/g" {} \;
 
 link-tests-cicd TARGET_DIR:
     mkdir -p {{TARGET_DIR}}/sdk/test/app

@@ -40,6 +40,11 @@ class {{#operations}}Test{{classname}}(unittest.IsolatedAsyncioTestCase):
    {{#operation}}
     @pytest.mark.asyncio
     async def test_{{operationId}}(self) -> None:
+
+        if "{{vendorExtensions.x-fbn-apistatus}}" == "Experimental":
+            return
+
+        requestBodyByteArray: bytearray = "SomeContentForRequestBody"
         numRuns = 0
         numExamples = 1
         while numRuns < numExamples:
@@ -83,7 +88,13 @@ class {{#operations}}Test{{classname}}(unittest.IsolatedAsyncioTestCase):
                 {{paramName}}: {{{dataType}}} = {{{example}}}
             {{/isUuid}}
             {{^isUuid}}
-            {{paramName}}: {{{dataType}}} = {{{example}}}
+            {{^isByteArray}}
+            {{paramName}}: {{{dataType}}} = {{^isQueryParam}}{{#isString}}"""{{/isString}}{{/isQueryParam}}{{{example}}}{{^isQueryParam}}{{#isString}}"""{{/isString}}{{/isQueryParam}}
+            {{/isByteArray}}
+            {{#isByteArray}}
+            {{paramName}}: {{{dataType}}} = requestBodyByteArray
+            content_length = len(requestBodyByteArray)
+            {{/isByteArray}}
             {{/isUuid}}
             {{/isPrimitiveType}}
             {{^isPrimitiveType}}
@@ -91,7 +102,7 @@ class {{#operations}}Test{{classname}}(unittest.IsolatedAsyncioTestCase):
             spec_filepath = os.environ['OPENAPI_SPEC_PATH']
             with open(spec_filepath) as file:
                 openapiSpecJson = file.read()
-            
+          
             method = "{{httpMethod}}".replace("Http", "").lower()
             jsonContent = json.loads(openapiSpecJson)
             jsonContent = jsonContent["paths"]["{{path}}"][method]["requestBody"]["content"]["application/json"]
@@ -111,9 +122,21 @@ class {{#operations}}Test{{classname}}(unittest.IsolatedAsyncioTestCase):
             {{/content}}
             {{^content}}
             {{#isArray}}
-            {{paramName}}: {{{dataType}}} = {{{example}}}{{/isArray}}
+            {{paramName}}: {{{dataType}}} =  {{{example}}}
+            {{/isArray}}
             {{^isArray}}
-            {{paramName}}: {{{dataType}}} = json.loads("""{{{example}}}"""){{/isArray}}
+            {{#isEnumRef}}
+            {{paramName}}: {{{dataType}}} = {{{schema.example}}}
+            {{/isEnumRef}}
+            {{^isEnumRef}}
+            {{#isExplode}}
+            {{paramName}}: {{{dataType}}} = {{{example}}}
+            {{/isExplode}}
+            {{^isExplode}}
+            {{paramName}}: {{{dataType}}} = json.loads("""{{{example}}}""")
+            {{/isExplode}}
+            {{/isEnumRef}}
+            {{/isArray}}
             {{/content}}
             {{/isPrimitiveType}}
             {{/vendorExtensions.x-regex}}
