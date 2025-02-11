@@ -74,9 +74,9 @@ generate-local FLAG="":
     if [ "{{APPLICATION_NAME}}" = "access" ]; then just make-import-fix; fi
 
 add-tests:
-    mkdir -p {{justfile_directory()}}/generate/.output/sdk/test/
-    rm -rf {{justfile_directory()}}/generate/.output/sdk/test/*
-    cp -R {{justfile_directory()}}/test_sdk/* {{justfile_directory()}}/generate/.output/sdk/test
+    mkdir -p {{justfile_directory()}}/generate/.output/sdk/test/app
+    rm -rf {{justfile_directory()}}/generate/.output/sdk/test/app/*
+    cp -R {{justfile_directory()}}/test_sdk/* {{justfile_directory()}}/generate/.output/sdk/test/app
 
     # these test files have been copied from the lusid sdk tests
     # rename to match values for the sdk being tested
@@ -84,21 +84,21 @@ add-tests:
 
     # note the default values at the top of this justfile won't work for the horizon or luminesce sdk
     # (they don't have this api/method)
-    find {{justfile_directory()}}/generate/.output/sdk/test -type f -exec sed -i -e "s/TEST_API_MODULE/${TEST_API_MODULE}/g" {} \;
-    find {{justfile_directory()}}/generate/.output/sdk/test -type f -exec sed -i -e "s/TEST_API/${TEST_API}/g" {} \;
-    find {{justfile_directory()}}/generate/.output/sdk/test -type f -exec sed -i -e "s/TEST_METHOD/${TEST_METHOD}/g" {} \;
+    find {{justfile_directory()}}/generate/.output/sdk/test/app -type f -exec sed -i -e "s/TEST_API_MODULE/${TEST_API_MODULE}/g" {} \;
+    find {{justfile_directory()}}/generate/.output/sdk/test/app -type f -exec sed -i -e "s/TEST_API/${TEST_API}/g" {} \;
+    find {{justfile_directory()}}/generate/.output/sdk/test/app -type f -exec sed -i -e "s/TEST_METHOD/${TEST_METHOD}/g" {} \;
 
 link-tests-cicd TARGET_DIR:
-    mkdir -p {{TARGET_DIR}}/sdk/test/
-    rm -rf {{TARGET_DIR}}/sdk/test/*
-    ln -s {{justfile_directory()}}/test_sdk/* {{TARGET_DIR}}/sdk/test
+    mkdir -p {{TARGET_DIR}}/sdk/test/app
+    rm -rf {{TARGET_DIR}}/sdk/test/app/*
+    cp -R {{justfile_directory()}}/test_sdk/* {{TARGET_DIR}}/sdk/test/app
 
     # these test files have been copied from the lusid sdk tests
     # rename to match values for the sdk being tested
-    find {{justfile_directory()}}/test_sdk -type f -exec sed -i -e "s/TO_BE_REPLACED/${PLACEHOLDER_VALUE_FOR_TESTS}/g" {} \;
-    find {{justfile_directory()}}/test_sdk -type f -exec sed -i -e "s/TEST_API_MODULE/${TEST_API_MODULE}/g" {} \;
-    find {{justfile_directory()}}/test_sdk -type f -exec sed -i -e "s/TEST_API/${TEST_API}/g" {} \;
-    find {{justfile_directory()}}/test_sdk -type f -exec sed -i -e "s/TEST_METHOD/${TEST_METHOD}/g" {} \;
+    find {{TARGET_DIR}}/sdk/test/app -type f -exec sed -i -e "s/TO_BE_REPLACED/${PLACEHOLDER_VALUE_FOR_TESTS}/g" {} \;
+    find {{TARGET_DIR}}/sdk/test/app -type f -exec sed -i -e "s/TEST_API_MODULE/${TEST_API_MODULE}/g" {} \;
+    find {{TARGET_DIR}}/sdk/test/app -type f -exec sed -i -e "s/TEST_API/${TEST_API}/g" {} \;
+    find {{TARGET_DIR}}/sdk/test/app -type f -exec sed -i -e "s/TEST_METHOD/${TEST_METHOD}/g" {} \;
  
 setup-test-local:
     @just generate-local
