@@ -7,16 +7,8 @@
 !.gitignore
 !.github
 
-
 # ignore any swagger.json file that ends up in here
 swagger.json
-
-# ignore test folders created during local testing
-lusid_drive
-insights
-identity
-schedule
-finbourne-luminesce
 
 **/*.pyc
 

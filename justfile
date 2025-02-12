@@ -5,9 +5,10 @@
 #    PROJECT_NAME
 #    PACKAGE_VERSION
 #    PYPI_PACKAGE_LOCATION
-export APPLICATION_NAME := `echo ${APPLICATION_NAME:-access}`
-export PACKAGE_NAME := `echo ${PACKAGE_NAME:-finbourne_access}`
-export PROJECT_NAME := `echo ${PROJECT_NAME:-access-sdk}`
+
+export APPLICATION_NAME := `echo ${APPLICATION_NAME:-lusid-sdk}`
+export PACKAGE_NAME := `echo ${PACKAGE_NAME:-lusid_sdk}`
+export PROJECT_NAME := `echo ${PROJECT_NAME:-lusid-sdk}`
 export PACKAGE_VERSION := `echo ${PACKAGE_VERSION:-2.0.0}`
 
 export PYPI_PACKAGE_LOCATION := `echo ${PYPI_PACKAGE_LOCATION:-~/.pypi/packages}`
