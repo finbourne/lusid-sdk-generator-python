@@ -23,7 +23,7 @@ export FBN_CLIENT_SECRET := `echo ${FBN_CLIENT_SECRET:-client-secret}`
 export TEST_API_MODULE := `echo ${TEST_API_MODULE:-api.application_metadata_api}`
 export TEST_API := `echo ${TEST_API:-ApplicationMetadataApi}`
 export TEST_METHOD := `echo ${TEST_METHOD:-'list_access_controlled_resources('}`
-export GENERATE_API_TESTS := `echo ${GENERATE_API_TESTS:-true}`
+export GENERATE_API_TESTS := `echo ${GENERATE_API_TESTS:-false}`
 
 swagger_path := "./swagger.json"
 
