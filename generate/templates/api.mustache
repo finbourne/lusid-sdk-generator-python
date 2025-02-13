@@ -45,16 +45,16 @@ class {{classname}}:
 {{#asyncio}}
 
     @overload
-    async def {{operationId}}(self, {{#allParams}}{{paramName}} : {{^isString}}{{{vendorExtensions.x-py-typing}}}{{^required}} = None{{/required}}{{/isString}}{{#isString}}Annotated{{^required}}[Optional{{/required}}[StrictStr{{^required}}]{{/required}}, Field({{#required}}...{{/required}}{{#description}}{{#required}},{{/required}} description="{{description}}"{{/description}})]{{^required}} = None{{/required}}{{/isString}}, {{/allParams}}**kwargs) -> {{{returnType}}}{{^returnType}}None{{/returnType}}:  # noqa: E501
+    async def {{operationId}}(self, {{#allParams}}{{paramName}} : {{^isString}}{{{vendorExtensions.x-py-typing}}}{{^required}} = None{{/required}}{{/isString}}{{#isString}}Annotated{{^required}}[Optional{{/required}}[StrictStr{{^required}}]{{/required}}, Field({{#required}}...{{/required}}{{#description}}{{#required}},{{/required}} description="{{{description}}}"{{/description}})]{{^required}} = None{{/required}}{{/isString}}, {{/allParams}}**kwargs) -> {{{returnType}}}{{^returnType}}None{{/returnType}}:  # noqa: E501
         ...
 
     @overload
-    def {{operationId}}(self, {{#allParams}}{{paramName}} : {{^isString}}{{{vendorExtensions.x-py-typing}}}{{^required}} = None{{/required}}{{/isString}}{{#isString}}Annotated{{^required}}[Optional{{/required}}[StrictStr{{^required}}]{{/required}}, Field({{#required}}...{{/required}}{{#description}}{{#required}},{{/required}} description="{{description}}"{{/description}})]{{^required}} = None{{/required}}{{/isString}}, {{/allParams}}async_req: Optional[bool]=True, **kwargs) -> {{{returnType}}}{{^returnType}}None{{/returnType}}:  # noqa: E501
+    def {{operationId}}(self, {{#allParams}}{{paramName}} : {{^isString}}{{{vendorExtensions.x-py-typing}}}{{^required}} = None{{/required}}{{/isString}}{{#isString}}Annotated{{^required}}[Optional{{/required}}[StrictStr{{^required}}]{{/required}}, Field({{#required}}...{{/required}}{{#description}}{{#required}},{{/required}} description="{{{description}}}"{{/description}})]{{^required}} = None{{/required}}{{/isString}}, {{/allParams}}async_req: Optional[bool]=True, **kwargs) -> {{{returnType}}}{{^returnType}}None{{/returnType}}:  # noqa: E501
         ...
 
 {{/asyncio}}
     @validate_arguments
-    def {{operationId}}(self, {{#allParams}}{{paramName}} : {{^isString}}{{{vendorExtensions.x-py-typing}}}{{^required}} = None{{/required}}{{/isString}}{{#isString}}Annotated{{^required}}[Optional{{/required}}[StrictStr{{^required}}]{{/required}}, Field({{#required}}...{{/required}}{{#description}}{{#required}},{{/required}} description="{{description}}"{{/description}})]{{^required}} = None{{/required}}{{/isString}}, {{/allParams}}{{#asyncio}}async_req: Optional[bool]=None, {{/asyncio}}**kwargs) -> {{#asyncio}}Union[{{{returnType}}}{{^returnType}}None{{/returnType}}, Awaitable[{{{returnType}}}{{^returnType}}None{{/returnType}}]]{{/asyncio}}{{^asyncio}}{{{returnType}}}{{^returnType}}None{{/returnType}}{{/asyncio}}:  # noqa: E501
+    def {{operationId}}(self, {{#allParams}}{{paramName}} : {{^isString}}{{{vendorExtensions.x-py-typing}}}{{^required}} = None{{/required}}{{/isString}}{{#isString}}Annotated{{^required}}[Optional{{/required}}[StrictStr{{^required}}]{{/required}}, Field({{#required}}...{{/required}}{{#description}}{{#required}},{{/required}} description="{{{description}}}"{{/description}})]{{^required}} = None{{/required}}{{/isString}}, {{/allParams}}{{#asyncio}}async_req: Optional[bool]=None, {{/asyncio}}**kwargs) -> {{#asyncio}}Union[{{{returnType}}}{{^returnType}}None{{/returnType}}, Awaitable[{{{returnType}}}{{^returnType}}None{{/returnType}}]]{{/asyncio}}{{^asyncio}}{{{returnType}}}{{^returnType}}None{{/returnType}}{{/asyncio}}:  # noqa: E501
         """{{#isDeprecated}}(Deprecated) {{/isDeprecated}}{{{summary}}}{{^summary}}{{operationId}}{{/summary}}  # noqa: E501
 
 {{#notes}}
@@ -91,7 +91,7 @@ class {{classname}}:
         return self.{{operationId}}_with_http_info({{#allParams}}{{paramName}}, {{/allParams}}**kwargs)  # noqa: E501
 
     @validate_arguments
-    def {{operationId}}_with_http_info(self, {{#allParams}}{{paramName}} : {{^isString}}{{{vendorExtensions.x-py-typing}}}{{^required}} = None{{/required}}{{/isString}}{{#isString}}Annotated{{^required}}[Optional{{/required}}[StrictStr{{^required}}]{{/required}}, Field({{#required}}...{{/required}}{{#description}}{{#required}},{{/required}} description="{{description}}"{{/description}})]{{^required}} = None{{/required}}{{/isString}}, {{/allParams}}**kwargs) -> ApiResponse:  # noqa: E501
+    def {{operationId}}_with_http_info(self, {{#allParams}}{{paramName}} : {{^isString}}{{{vendorExtensions.x-py-typing}}}{{^required}} = None{{/required}}{{/isString}}{{#isString}}Annotated{{^required}}[Optional{{/required}}[StrictStr{{^required}}]{{/required}}, Field({{#required}}...{{/required}}{{#description}}{{#required}},{{/required}} description="{{{description}}}"{{/description}})]{{^required}} = None{{/required}}{{/isString}}, {{/allParams}}**kwargs) -> ApiResponse:  # noqa: E501
         """{{#isDeprecated}}(Deprecated) {{/isDeprecated}}{{{summary}}}{{^summary}}{{operationId}}{{/summary}}  # noqa: E501
 
 {{#notes}}
