@@ -6,8 +6,8 @@
 #    PACKAGE_VERSION
 #    PYPI_PACKAGE_LOCATION
 
-export APPLICATION_NAME := `echo ${APPLICATION_NAME:-lusid-sdk}`
-export PACKAGE_NAME := `echo ${PACKAGE_NAME:-lusid_sdk}`
+export APPLICATION_NAME := `echo ${APPLICATION_NAME:-lusid}`
+export PACKAGE_NAME := `echo ${PACKAGE_NAME:-lusid}`
 export PROJECT_NAME := `echo ${PROJECT_NAME:-lusid-sdk}`
 export PACKAGE_VERSION := `echo ${PACKAGE_VERSION:-2.0.0}`
 
