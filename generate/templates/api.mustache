@@ -26,6 +26,7 @@ from {{packageName}}.extensions.configuration_options import ConfigurationOption
 # ensure templated type usages are imported
 from pydantic.v1 import Field, StrictStr
 from typing import Optional
+from typing_extensions import Annotated
 
 {{#operations}}
 class {{classname}}:
