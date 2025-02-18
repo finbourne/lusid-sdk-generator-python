@@ -167,6 +167,8 @@ generate-cicd TARGET_DIR FLAG="":
 
     if [ "{{APPLICATION_NAME}}" = "access" ]; then just make-import-fix; fi
 
+    if [ "{{APPLICATION_NAME}}" = "lusid" ]; then just make-change-for-dictionary-string-object; fi  
+
     # need to remove the created content before copying over the top of it.
     # this prevents deleted content from hanging around indefinitely.
     rm -rf {{TARGET_DIR}}/sdk/${PACKAGE_NAME}
@@ -229,3 +231,14 @@ make-import-fix:
     {{justfile_directory()}}/generate/.output/sdk/finbourne_access/models/selector_definition.py \
     "from finbourne_access.models.policy_selector_definition import PolicySelectorDefinition" \
     "SelectorDefinition.update_forward_refs()"
+
+# See CTOOLS-24 jira ticket for more informatiin
+# needed as python sdk generates Optional[Dict[str, Dict[str, Any]]] , we want  Optional[Dict[str, Any]]
+# only for lusid
+make-change-for-dictionary-string-object:
+    bash {{justfile_directory()}}/generate/fix-file-for-one-of.sh \
+    {{justfile_directory()}}/generate/.output/sdk/lusid/models/aggregate_spec.py \
+    "Dict[str, Dict[str, Any]]" "Dict[str, Any]"
+    bash {{justfile_directory()}}/generate/fix-file-for-one-of.sh \
+    {{justfile_directory()}}/generate/.output/sdk/lusid/models/reconciliation_line.py \
+    "Dict[str, Dict[str, Any]]" "Dict[str, Any]"
