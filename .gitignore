@@ -7,8 +7,10 @@
 !.gitignore
 !.github
 
-
 # ignore any swagger.json file that ends up in here
 swagger.json
 
 **/*.pyc
+
+#some reason the test_sdk generates additional files with the extension -e
+*.*-e
