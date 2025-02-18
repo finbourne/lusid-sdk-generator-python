@@ -14,3 +14,14 @@ swagger.json
 
 #some reason the test_sdk generates additional files with the extension -e
 *.*-e
+
+horizon
+lusid
+identity
+lusid_drive
+insights
+schedule
+finbourne-luminesce
+drive
+configuration
+access

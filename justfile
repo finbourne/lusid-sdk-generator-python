@@ -236,9 +236,10 @@ make-import-fix:
 # needed as python sdk generates Optional[Dict[str, Dict[str, Any]]] , we want  Optional[Dict[str, Any]]
 # only for lusid
 make-change-for-dictionary-string-object:
-    bash {{justfile_directory()}}/generate/fix-file-for-one-of.sh \
-    {{justfile_directory()}}/generate/.output/sdk/lusid/models/aggregate_spec.py \
-    "Dict[str, Dict[str, Any]]" "Dict[str, Any]"
-    bash {{justfile_directory()}}/generate/fix-file-for-one-of.sh \
-    {{justfile_directory()}}/generate/.output/sdk/lusid/models/reconciliation_line.py \
-    "Dict[str, Dict[str, Any]]" "Dict[str, Any]"
+    bash $justfile_directory/generate/fix-file-for-dictionary.sh \
+    $justfile_directory/generate/.output/sdk/lusid/models/aggregate_spec.py \
+    "Dict\[str, Dict\[str, Any\]\]" "Dict\[str, Any\]"
+    bash $justfile_directory/generate/fix-file-for-dictionary.sh \
+    $justfile_directory/generate/.output/sdk/lusid/models/reconciliation_line.py \
+    "Dict\[str, Dict\[str, Any\]\]" "Dict\[str, Any\]"
+  
