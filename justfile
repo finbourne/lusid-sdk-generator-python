@@ -73,6 +73,8 @@ generate-local FLAG="":
 
     if [ "{{APPLICATION_NAME}}" = "access" ]; then just make-import-fix; fi
 
+    if [ "{{APPLICATION_NAME}}" = "lusid" ]; then just make-change-for-dictionary-string-object; fi  
+
 add-tests:
     mkdir -p {{justfile_directory()}}/generate/.output/sdk/test/app
     rm -rf {{justfile_directory()}}/generate/.output/sdk/test/app/*
@@ -236,10 +238,10 @@ make-import-fix:
 # needed as python sdk generates Optional[Dict[str, Dict[str, Any]]] , we want  Optional[Dict[str, Any]]
 # only for lusid
 make-change-for-dictionary-string-object:
-    bash $justfile_directory/generate/fix-file-for-dictionary.sh \
-    $justfile_directory/generate/.output/sdk/lusid/models/aggregate_spec.py \
+    bash {{justfile_directory()}}/generate/fix-file-for-dictionary.sh \
+    {{justfile_directory()}}/generate/.output/sdk/lusid/models/aggregate_spec.py \
     "Dict\[str, Dict\[str, Any\]\]" "Dict\[str, Any\]"
-    bash $justfile_directory/generate/fix-file-for-dictionary.sh \
-    $justfile_directory/generate/.output/sdk/lusid/models/reconciliation_line.py \
+    bash {{justfile_directory()}}/generate/fix-file-for-dictionary.sh \
+    {{justfile_directory()}}/generate/.output/sdk/lusid/models/reconciliation_line.py \
     "Dict\[str, Dict\[str, Any\]\]" "Dict\[str, Any\]"
   
