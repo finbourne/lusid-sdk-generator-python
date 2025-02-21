@@ -14,6 +14,9 @@ trap 'failure ${LINENO} "$BASH_COMMAND"' ERR
 file=$1
 patternMax=',\s*max_items=[0-9]\+'
 patternMin=',\s*min_items=[0-9]\+'
+patternGe=',\s*ge=[0-9]\+'
+patternLe=',\s*le=[0-9]\+'
+
 
 # need the GNU version of sed on a mac
 if [[ $(uname) == Darwin ]]; then
@@ -38,7 +41,15 @@ if ! sed -i "s/$patternMax//g" "$file"; then
     echo "error updating file '$file' for one of fix"
     exit 1
 fi
-f ! sed -i "s/$patternMin//g" "$file"; then
+if ! sed -i "s/$patternMin//g" "$file"; then
+    echo "error updating file '$file' for one of fix"
+    exit 1
+fi
+if ! sed -i "s/$patternGe//g" "$file"; then
+    echo "error updating file '$file' for one of fix"
+    exit 1
+fi
+if ! sed -i "s/$patternLe//g" "$file"; then
     echo "error updating file '$file' for one of fix"
     exit 1
 fi

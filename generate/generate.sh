@@ -72,12 +72,12 @@ echo "[INFO] generating sdk version: ${PACKAGE_VERSION}"
 
 # generate the SDK
 java ${JAVA_OPTS} -jar /opt/openapi-generator/modules/openapi-generator-cli/target/openapi-generator-cli.jar generate \
-    --global-property modelTests=false,apiTests=${GENERATE_API_TESTS} \
+    --global-property modelTests=true,debugModels=true,apiTests=${GENERATE_API_TESTS} \
     -i $sdk_output_folder/swagger.json \
     -g python \
     -o $sdk_output_folder \
     -t $gen_root/templates \
-    -c $config_file # enable the following if a manual override is required 
+    -c $config_file > $sdk_output_folder/models.json # enable the following if a manual override is required 
     
     # --skip-validate-spec
 
