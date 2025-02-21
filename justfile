@@ -227,7 +227,7 @@ make-fix-for-one-of:
     bash {{justfile_directory()}}/generate/fix-files-for-one-of.sh {{justfile_directory()}} ${PACKAGE_NAME} ${APPLICATION_NAME}
 
 make-fix-length_constraints:
-    echo "removing max items constraints for arrayy"
+    echo "removing min and max items constraints for arrayy"
     bash {{justfile_directory()}}/generate/fix-files-for-length_constraints.sh {{justfile_directory()}} ${PACKAGE_NAME} ${APPLICATION_NAME}
 
 make-import-fix:

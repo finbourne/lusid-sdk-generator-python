@@ -12,7 +12,8 @@ failure() {
 trap 'failure ${LINENO} "$BASH_COMMAND"' ERR
 
 file=$1
-pattern=',\s*max_items=[0-9]\+'
+patternMax=',\s*max_items=[0-9]\+'
+patternMin=',\s*min_items=[0-9]\+'
 
 # need the GNU version of sed on a mac
 if [[ $(uname) == Darwin ]]; then
@@ -33,7 +34,12 @@ fi
 
 # remove
 # it may not be necessary to check if the text exists in the file
-if ! sed -i "s/$pattern//g" "$file"; then
+if ! sed -i "s/$patternMax//g" "$file"; then
     echo "error updating file '$file' for one of fix"
     exit 1
 fi
+f ! sed -i "s/$patternMin//g" "$file"; then
+    echo "error updating file '$file' for one of fix"
+    exit 1
+fi
+
