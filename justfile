@@ -73,6 +73,9 @@ generate-local FLAG="":
 
     if [ "{{APPLICATION_NAME}}" = "access" ]; then just make-import-fix; fi
 
+    # for all sdks, fix the length constraints
+    just make-fix-length_constraints;
+
 add-tests:
     mkdir -p {{justfile_directory()}}/generate/.output/sdk/test/app
     rm -rf {{justfile_directory()}}/generate/.output/sdk/test/app/*
@@ -167,6 +170,9 @@ generate-cicd TARGET_DIR FLAG="":
 
     if [ "{{APPLICATION_NAME}}" = "access" ]; then just make-import-fix; fi
 
+    # for all sdks, fix the length constraints
+    just make-fix-length_constraints;
+
     # need to remove the created content before copying over the top of it.
     # this prevents deleted content from hanging around indefinitely.
     rm -rf {{TARGET_DIR}}/sdk/${PACKAGE_NAME}
@@ -219,6 +225,10 @@ generate-and-publish-cicd OUT_DIR FLAG="":
 
 make-fix-for-one-of:
     bash {{justfile_directory()}}/generate/fix-files-for-one-of.sh {{justfile_directory()}} ${PACKAGE_NAME} ${APPLICATION_NAME}
+
+make-fix-length_constraints:
+    echo "removing min and max items constraints for arrayy"
+    bash {{justfile_directory()}}/generate/fix-files-for-length_constraints.sh {{justfile_directory()}} ${PACKAGE_NAME} ${APPLICATION_NAME}
 
 make-import-fix:
     bash {{justfile_directory()}}/generate/fix-imports-for-access.sh \
