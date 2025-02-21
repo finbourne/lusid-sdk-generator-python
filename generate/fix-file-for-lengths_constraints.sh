@@ -30,7 +30,7 @@ fi
 
 # check file exists
 if ! [[ -f $file ]]; then
-    echo "expected file '$file' does not exist - unable to carry out fix for one of"
+    echo "expected file '$file' does not exist - unable to remove contraints"
     exit 1
 fi
 
