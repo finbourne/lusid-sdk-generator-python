@@ -17,7 +17,6 @@ patternMin=',\s*min_items=[0-9]\+'
 patternGe=',\s*ge=[0-9]\+'
 patternLe=',\s*le=[0-9]\+'
 
-
 # need the GNU version of sed on a mac
 if [[ $(uname) == Darwin ]]; then
     if gsed --version > /dev/null; then
@@ -35,22 +34,20 @@ if ! [[ -f $file ]]; then
     exit 1
 fi
 
-# remove
-# it may not be necessary to check if the text exists in the file
 if ! sed -i "s/$patternMax//g" "$file"; then
-    echo "error updating file '$file' for one of fix"
+    echo "error updating file '$file' for removing MaxItems"
     exit 1
 fi
 if ! sed -i "s/$patternMin//g" "$file"; then
-    echo "error updating file '$file' for one of fix"
+    echo "error updating file '$file' for removing MinItems"
     exit 1
 fi
 if ! sed -i "s/$patternGe//g" "$file"; then
-    echo "error updating file '$file' for one of fix"
+    echo "error updating file '$file' for removing GE"
     exit 1
 fi
 if ! sed -i "s/$patternLe//g" "$file"; then
-    echo "error updating file '$file' for one of fix"
+    echo "error updating file '$file' for removing LE"
     exit 1
 fi
 
