@@ -12,17 +12,17 @@ trap 'failure ${LINENO} "$BASH_COMMAND"' ERR
 justfile_dir=$1
 package_name=$2
 
-directory="$justfile_dir/generate/.output/sdk/$package_name"
+directory="$justfile_dir/generate/.output/sdk"
 
 
-for file in "$directory/models"/*; do
+for file in "$directory/$package_name/models"/*; do
     if [[ -f "$file" ]]; then
         echo "Processing file: $file"
         bash "$justfile_dir/generate/fix-file-for-lengths_constraints.sh" $file 
     fi
 done
 
-for file in "$directory/api"/*; do
+for file in "$directory/$package_name/api"/*; do
     if [[ -f "$file" ]]; then
         echo "Processing file: $file"
         bash "$justfile_dir/generate/fix-file-for-lengths_constraints.sh" $file 
