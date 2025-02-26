@@ -21,7 +21,17 @@ class {{classname}}({{#parent}}{{{.}}}{{/parent}}{{^parent}}BaseModel{{/parent}}
     """
     {{#vars}}
     {{^isString}}
+    {{#hasItems}}
+    {{#items.isEnumOrRef}}
+    {{name}}: {{^required}}Optional[{{/required}}conlist[Str]{{^required}}]{{/required}} = Field({{#required}}...{{/required}}{{^required}}None{{/required}},alias="{{baseName}}"{{#description}}, description="{{{description}}}"{{/description}})
+    {{/items.isEnumOrRef}}
+    {{^items.isEnumOrRef}}
     {{name}}: {{{vendorExtensions.x-py-typing}}}
+    {{/items.isEnumOrRef}}
+    {{/hasItems}}
+    {{^hasItems}}
+    {{name}}: {{{vendorExtensions.x-py-typing}}}
+    {{/hasItems}}
     {{/isString}}
     {{#isString}}
     {{name}}:  {{^required}}Optional[{{/required}}StrictStr{{^required}}]{{/required}} = Field({{#required}}...{{/required}}{{^required}}None{{/required}},alias="{{baseName}}"{{#description}}, description="{{{description}}}"{{/description}}) 

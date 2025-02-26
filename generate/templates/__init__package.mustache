@@ -18,8 +18,8 @@ from {{packageName}}.exceptions import ApiValueError
 from {{packageName}}.exceptions import ApiKeyError
 from {{packageName}}.exceptions import ApiException
 # import models into sdk package
-{{#models}}{{#model}}from {{modelPackage}}.{{classFilename}} import {{classname}}
-{{/model}}{{/models}}
+{{#models}}{{#model}}{{^isEnum}}from {{modelPackage}}.{{classFilename}} import {{classname}}
+{{/isEnum}}{{/model}}{{/models}}
 # import extensions into sdk package
 from {{packageName}}.extensions import (
     SyncApiClientFactory,
@@ -35,7 +35,7 @@ from {{packageName}}.extensions import (
 
 __all__ = [
     {{#apiInfo}}{{#apis}}"{{classname}}",
-    {{/apis}}{{/apiInfo}}{{#models}}{{#model}}"{{classname}}",
+    {{/apis}}{{/apiInfo}}{{#models}}{{#model}}{{^isEnum}}"{{classname}}",{{/isEnum}}
     {{/model}}{{/models}}"ApiClient",
     "Configuration",
     "OpenApiException",

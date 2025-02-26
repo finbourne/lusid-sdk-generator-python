@@ -6,12 +6,14 @@
 # import models into model package
 {{#models}}
 {{#model}}
+{{^isEnum}}
 from {{modelPackage}}.{{classFilename}} import {{classname}}
+{{/isEnum}}
 {{/model}}
 {{/models}}
 
 
 __all__ = [{{#models}}{{^-last}}
-    {{#model}}"{{classname}}",{{/model}}{{/-last}}{{#-last}}
-    {{#model}}"{{classname}}"{{/model}}{{/-last}}{{/models}}
+    {{#model}}{{^isEnum}}"{{classname}}",{{/isEnum}}{{/model}}{{/-last}}{{#-last}}
+    {{#model}}{{^isEnum}}"{{classname}}"{{/isEnum}}{{/model}}{{/-last}}{{/models}}
 ]
