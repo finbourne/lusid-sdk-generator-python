@@ -31,36 +31,6 @@ class {{classname}}({{#parent}}{{{.}}}{{/parent}}{{^parent}}BaseModel{{/parent}}
     additional_properties: Dict[str, Any] = {}
 {{/isAdditionalPropertiesTrue}}
     __properties = [{{#allVars}}"{{baseName}}"{{^-last}}, {{/-last}}{{/allVars}}]
-{{#vars}}
-    {{#isEnum}}
-
-    @validator('{{{name}}}')
-    def {{{name}}}_validate_enum(cls, value):
-        """Validates the enum"""
-        {{^required}}
-        if value is None:
-            return value
-
-        {{/required}}
-        {{#required}}
-        {{#isNullable}}
-        if value is None:
-            return value
-
-        {{/isNullable}}
-        {{/required}}
-        {{#isArray}}
-        for i in value:
-            if i not in ({{#allowableValues}}{{#enumVars}}{{{value}}}{{^-last}}, {{/-last}}{{/enumVars}}{{/allowableValues}}):
-                raise ValueError("each list item must be one of ({{#allowableValues}}{{#enumVars}}{{{value}}}{{^-last}}, {{/-last}}{{/enumVars}}{{/allowableValues}})")
-        {{/isArray}}
-        {{^isArray}}
-        if value not in ({{#allowableValues}}{{#enumVars}}{{{value}}}{{^-last}}, {{/-last}}{{/enumVars}}{{/allowableValues}}):
-            raise ValueError("must be one of enum values ({{#allowableValues}}{{#enumVars}}{{{value}}}{{^-last}}, {{/-last}}{{/enumVars}}{{/allowableValues}})")
-        {{/isArray}}
-        return value
-    {{/isEnum}}
-{{/vars}}
 
     class Config:
         """Pydantic configuration"""
