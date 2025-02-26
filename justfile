@@ -65,15 +65,12 @@ generate-local FLAG="":
     # split the README into two, and move one up a level
     bash generate/split-readme.sh
     
-    # make the necessary post-generation fixes to the sdks using the 'oneOf' openapi feature
-    # caused by a bug in the python generator
-    if [ "{{APPLICATION_NAME}}" = "notifications" ] || [ "{{APPLICATION_NAME}}" = "workflow" ]; then just make-fix-for-one-of; fi
 
     echo "Application name: $APPLICATION_NAME"
 
     if [ "{{APPLICATION_NAME}}" = "access" ]; then just make-import-fix; fi
 
-    # for all sdks, fix the length constraints
+    # for all sdks, remove the min and max items constraints
     just make-fix-length_constraints;
 
 add-tests:
@@ -164,13 +161,9 @@ generate-cicd TARGET_DIR FLAG="":
     # split the README into two, and move one up a level
     bash generate/split-readme.sh
 
-    # make the necessary post-generation fixes to the sdks using the 'oneOf' openapi feature
-    # caused by a bug in the python generator
-    if [ "{{APPLICATION_NAME}}" = "notifications" ] || [ "{{APPLICATION_NAME}}" = "workflow" ]; then just make-fix-for-one-of; fi
-
     if [ "{{APPLICATION_NAME}}" = "access" ]; then just make-import-fix; fi
 
-    # for all sdks, fix the length constraints
+    # for all sdks, remove the min and max items constraints
     just make-fix-length_constraints;
 
     # need to remove the created content before copying over the top of it.
