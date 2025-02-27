@@ -49,10 +49,17 @@ class {{classname}}({{#parent}}{{{.}}}{{/parent}}{{^parent}}BaseModel{{/parent}}
         """Validates the enum"""
 
         # Finbourne have removed enum validation on all models, except for this use case:
-        # Workflow and notification models use the property name 'type' as the discriminator
+        # Workflow and notification application SDK use the property name 'type' as the discriminator on a number of classes.
         # Duing instantiation, the value of 'type' is checked against the enum values, 
         
-        # If the property name is not 'type', then ignore enum validation checks 
+
+        # check it's a class that uses the 'type' property as a discriminator
+        if "{{classname}}" not in ["AmazonSqsNotificationType", "AmazonSqsNotificationTypeResponse", "AmazonSqsPrincipalAuthNotificationType", "AmazonSqsPrincipalAuthNotificationTypeResponse",
+                        "CreateChildTasksAction", "CreateChildTasksActionResponse", "Fail", "FailResponse"]:
+            return value    
+        
+        
+        # Only validate the 'type' property of the class
         if "{{{name}}}" != "type":
             return value
 
