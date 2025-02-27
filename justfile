@@ -65,8 +65,11 @@ generate-local FLAG="":
     # split the README into two, and move one up a level
     bash generate/split-readme.sh
     
-
     echo "Application name: $APPLICATION_NAME"
+
+    # make the necessary post-generation fixes to the sdks using the 'oneOf' openapi feature
+    # caused by a bug in the python generator
+    if [ "{{APPLICATION_NAME}}" = "notifications" ] || [ "{{APPLICATION_NAME}}" = "workflow" ]; then just make-fix-for-one-of; fi
 
     if [ "{{APPLICATION_NAME}}" = "access" ]; then just make-import-fix; fi
 
@@ -160,6 +163,10 @@ generate-cicd TARGET_DIR FLAG="":
 
     # split the README into two, and move one up a level
     bash generate/split-readme.sh
+
+    # make the necessary post-generation fixes to the sdks using the 'oneOf' openapi feature
+    # caused by a bug in the python generator
+    if [ "{{APPLICATION_NAME}}" = "notifications" ] || [ "{{APPLICATION_NAME}}" = "workflow" ]; then just make-fix-for-one-of; fi
 
     if [ "{{APPLICATION_NAME}}" = "access" ]; then just make-import-fix; fi
 
