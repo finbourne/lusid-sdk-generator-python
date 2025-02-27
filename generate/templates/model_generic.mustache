@@ -53,7 +53,7 @@ class {{classname}}({{#parent}}{{{.}}}{{/parent}}{{^parent}}BaseModel{{/parent}}
         # Duing instantiation, the value of 'type' is checked against the enum values, 
         
         # If the property name is not 'type', then ignore enum validation checks 
-        if {{{name}}} != "type":
+        if "{{{name}}}" != "type":
             return value
 
         {{^required}}
