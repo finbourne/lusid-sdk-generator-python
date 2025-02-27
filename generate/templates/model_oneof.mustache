@@ -59,12 +59,19 @@ class {{classname}}({{#parent}}{{{.}}}{{/parent}}{{^parent}}BaseModel{{/parent}}
         instance = {{{classname}}}.construct()
         error_messages = []
         match = 0
+        matchclass = """"
+
+        {{#useOneOfDiscriminatorLookup}}
+        {{#discriminator}}
+        {{#mappedModels}}
+        {{#-first}}
         {{#composedSchemas.oneOf}}
         # validate data type: {{{dataType}}}
         {{#isContainer}}
         try:
             instance.{{vendorExtensions.x-py-name}} = v
             match += 1
+            matchclass =matchclass+" {{vendorExtensions.x-py-name}}"
         except (ValidationError, ValueError) as e:
             error_messages.append(str(e))
         {{/isContainer}}
@@ -73,6 +80,7 @@ class {{classname}}({{#parent}}{{{.}}}{{/parent}}{{^parent}}BaseModel{{/parent}}
         try:
             instance.{{vendorExtensions.x-py-name}} = v
             match += 1
+            matchclass =matchclass+" {{vendorExtensions.x-py-name}}"
         except (ValidationError, ValueError) as e:
             error_messages.append(str(e))
         {{/isPrimitiveType}}
@@ -86,7 +94,7 @@ class {{classname}}({{#parent}}{{{.}}}{{/parent}}{{^parent}}BaseModel{{/parent}}
         {{/composedSchemas.oneOf}}
         if match > 1:
             # more than 1 match
-            raise ValueError("Multiple matches found when setting `actual_instance` in {{{classname}}} with oneOf schemas: {{#oneOf}}{{{.}}}{{^-last}}, {{/-last}}{{/oneOf}}. Details: " + ", ".join(error_messages))
+            raise ValueError("Multiple matches found when setting `actual_instance` in {{{classname}}} with oneOf schemas: {{#oneOf}}{{{.}}}{{^-last}}, {{/-last}}{{/oneOf}}. Details: Matched classes" + ", ".join(matchclass))
         elif match == 0:
             # no match
             raise ValueError("No match found when setting `actual_instance` in {{{classname}}} with oneOf schemas: {{#oneOf}}{{{.}}}{{^-last}}, {{/-last}}{{/oneOf}}. Details: " + ", ".join(error_messages))
