@@ -126,10 +126,11 @@ class {{#operations}}Test{{classname}}(unittest.IsolatedAsyncioTestCase):
             {{/isArray}}
             {{^isArray}}
             {{#isEnumRef}}
-            {{paramName}}: {{{dataType}}} = {{{schema.example}}}
+            {{paramName}}: str = {{{schema.example}}}
             {{/isEnumRef}}
             {{^isEnumRef}}
             {{#isExplode}}
+            # An Enum, but treated as a string
             {{paramName}}: {{{dataType}}} = {{{example}}}
             {{/isExplode}}
             {{^isExplode}}
