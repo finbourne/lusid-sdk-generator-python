@@ -177,7 +177,8 @@ generate-cicd TARGET_DIR FLAG="":
     # this prevents deleted content from hanging around indefinitely.
     rm -rf {{TARGET_DIR}}/sdk/${PACKAGE_NAME}
     rm -rf {{TARGET_DIR}}/sdk/docs
-    
+    rm -rf {{TARGET_DIR}}/sdk/test
+
     cp -R generate/.output/. {{TARGET_DIR}}
     echo "copied output to {{TARGET_DIR}}"
     ls {{TARGET_DIR}}
