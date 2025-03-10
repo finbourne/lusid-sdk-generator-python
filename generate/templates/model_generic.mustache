@@ -50,7 +50,7 @@ class {{classname}}({{#parent}}{{{.}}}{{/parent}}{{^parent}}BaseModel{{/parent}}
 
         # Finbourne have removed enum validation on all models, except for this use case:
         # Workflow and notification application SDK use the property name 'type' as the discriminator on a number of classes.
-        # Duing instantiation, the value of 'type' is checked against the enum values, 
+        # During instantiation, the value of 'type' is checked against the enum values, 
         
 
         # check it's a class that uses the 'type' property as a discriminator
