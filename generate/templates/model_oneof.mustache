@@ -59,12 +59,14 @@ class {{classname}}({{#parent}}{{{.}}}{{/parent}}{{^parent}}BaseModel{{/parent}}
         instance = {{{classname}}}.construct()
         error_messages = []
         match = 0
+        matchclass = ""
         {{#composedSchemas.oneOf}}
         # validate data type: {{{dataType}}}
         {{#isContainer}}
         try:
             instance.{{vendorExtensions.x-py-name}} = v
             match += 1
+            matchclass = matchclass + " {{vendorExtensions.x-py-name}}"
         except (ValidationError, ValueError) as e:
             error_messages.append(str(e))
         {{/isContainer}}
@@ -73,6 +75,7 @@ class {{classname}}({{#parent}}{{{.}}}{{/parent}}{{^parent}}BaseModel{{/parent}}
         try:
             instance.{{vendorExtensions.x-py-name}} = v
             match += 1
+            matchclass = matchclass + " {{vendorExtensions.x-py-name}}"
         except (ValidationError, ValueError) as e:
             error_messages.append(str(e))
         {{/isPrimitiveType}}
@@ -81,12 +84,13 @@ class {{classname}}({{#parent}}{{{.}}}{{/parent}}{{^parent}}BaseModel{{/parent}}
             error_messages.append(f"Error! Input type `{type(v)}` is not `{{{dataType}}}`")
         else:
             match += 1
+            matchclass = matchclass + " {{{dataType}}}"
         {{/isPrimitiveType}}
         {{/isContainer}}
         {{/composedSchemas.oneOf}}
         if match > 1:
             # more than 1 match
-            raise ValueError("Multiple matches found when setting `actual_instance` in {{{classname}}} with oneOf schemas: {{#oneOf}}{{{.}}}{{^-last}}, {{/-last}}{{/oneOf}}. Details: " + ", ".join(error_messages))
+            raise ValueError("Multiple matches found when setting `actual_instance` in {{{classname}}} with oneOf schemas: {{#oneOf}}{{{.}}}{{^-last}}, {{/-last}}{{/oneOf}}. Details: Matched classes " + matchclass)
         elif match == 0:
             # no match
             raise ValueError("No match found when setting `actual_instance` in {{{classname}}} with oneOf schemas: {{#oneOf}}{{{.}}}{{^-last}}, {{/-last}}{{/oneOf}}. Details: " + ", ".join(error_messages))
@@ -108,6 +112,8 @@ class {{classname}}({{#parent}}{{{.}}}{{/parent}}{{^parent}}BaseModel{{/parent}}
         {{/isNullable}}
         error_messages = []
         match = 0
+        matchclass = ""
+        
 
         {{#useOneOfDiscriminatorLookup}}
         {{#discriminator}}
@@ -136,6 +142,7 @@ class {{classname}}({{#parent}}{{{.}}}{{/parent}}{{^parent}}BaseModel{{/parent}}
             # assign value to actual_instance
             instance.actual_instance = instance.{{vendorExtensions.x-py-name}}
             match += 1
+            matchclass =matchclass + " {{vendorExtensions.x-py-name}}"
         except (ValidationError, ValueError) as e:
             error_messages.append(str(e))
         {{/isContainer}}
@@ -148,6 +155,7 @@ class {{classname}}({{#parent}}{{{.}}}{{/parent}}{{^parent}}BaseModel{{/parent}}
             # assign value to actual_instance
             instance.actual_instance = instance.{{vendorExtensions.x-py-name}}
             match += 1
+            matchclass =matchclass + " {{vendorExtensions.x-py-name}}"
         except (ValidationError, ValueError) as e:
             error_messages.append(str(e))
         {{/isPrimitiveType}}
@@ -156,6 +164,7 @@ class {{classname}}({{#parent}}{{{.}}}{{/parent}}{{^parent}}BaseModel{{/parent}}
         try:
             instance.actual_instance = {{{dataType}}}.from_json(json_str)
             match += 1
+            matchclass =matchclass + " {{dataType}}"
         except (ValidationError, ValueError) as e:
             error_messages.append(str(e))
         {{/isPrimitiveType}}
@@ -164,7 +173,7 @@ class {{classname}}({{#parent}}{{{.}}}{{/parent}}{{^parent}}BaseModel{{/parent}}
 
         if match > 1:
             # more than 1 match
-            raise ValueError("Multiple matches found when deserializing the JSON string into {{{classname}}} with oneOf schemas: {{#oneOf}}{{{.}}}{{^-last}}, {{/-last}}{{/oneOf}}. Details: " + ", ".join(error_messages))
+            raise ValueError("Multiple matches found when deserializing the JSON string into {{{classname}}} with oneOf schemas: {{#oneOf}}{{{.}}}{{^-last}}, {{/-last}}{{/oneOf}}. Matches: "+matchclass+", Details: " + ", ".join(error_messages) + ", JSON: " + json_str)
         elif match == 0:
             # no match
             raise ValueError("No match found when deserializing the JSON string into {{{classname}}} with oneOf schemas: {{#oneOf}}{{{.}}}{{^-last}}, {{/-last}}{{/oneOf}}. Details: " + ", ".join(error_messages))

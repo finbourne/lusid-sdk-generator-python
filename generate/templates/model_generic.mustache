@@ -21,7 +21,17 @@ class {{classname}}({{#parent}}{{{.}}}{{/parent}}{{^parent}}BaseModel{{/parent}}
     """
     {{#vars}}
     {{^isString}}
+    {{#hasItems}}
+    {{#items.isEnumOrRef}}
+    {{name}}: {{^required}}Optional[{{/required}}conlist[Str]{{^required}}]{{/required}} = Field({{#required}}...{{/required}}{{^required}}None{{/required}},alias="{{baseName}}"{{#description}}, description="{{{description}}}"{{/description}})
+    {{/items.isEnumOrRef}}
+    {{^items.isEnumOrRef}}
     {{name}}: {{{vendorExtensions.x-py-typing}}}
+    {{/items.isEnumOrRef}}
+    {{/hasItems}}
+    {{^hasItems}}
+    {{name}}: {{{vendorExtensions.x-py-typing}}}
+    {{/hasItems}}
     {{/isString}}
     {{#isString}}
     {{name}}:  {{^required}}Optional[{{/required}}StrictStr{{^required}}]{{/required}} = Field({{#required}}...{{/required}}{{^required}}None{{/required}},alias="{{baseName}}"{{#description}}, description="{{{description}}}"{{/description}}) 
@@ -31,12 +41,64 @@ class {{classname}}({{#parent}}{{{.}}}{{/parent}}{{^parent}}BaseModel{{/parent}}
     additional_properties: Dict[str, Any] = {}
 {{/isAdditionalPropertiesTrue}}
     __properties = [{{#allVars}}"{{baseName}}"{{^-last}}, {{/-last}}{{/allVars}}]
-{{#vars}}
+    {{#vars}}
     {{#isEnum}}
 
     @validator('{{{name}}}')
     def {{{name}}}_validate_enum(cls, value):
         """Validates the enum"""
+
+        # Finbourne have removed enum validation on all models, except for this use case:
+        # Workflow and notification application SDK use the property name 'type' as the discriminator on a number of classes.
+        # During instantiation, the value of 'type' is checked against the enum values, 
+        
+
+        # check it's a class that uses the 'type' property as a discriminator
+        # list of classes can be found by searching for 'actual_instance: Union[' in the generated code
+        if '{{classname}}' not in [ 
+                                    # For notification application classes
+                                    'AmazonSqsNotificationType',
+                                    'AmazonSqsNotificationTypeResponse',
+                                    'AmazonSqsPrincipalAuthNotificationType',
+                                    'AmazonSqsPrincipalAuthNotificationTypeResponse',
+                                    'AzureServiceBusTypeResponse',
+                                    'AzureServiceBusNotificationType',
+                                    'EmailNotificationType',
+                                    'EmailNotificationTypeResponse',
+                                    'SmsNotificationType',
+                                    'SmsNotificationTypeResponse',
+                                    'WebhookNotificationType',
+                                    'WebhookNotificationTypeResponse',
+                        
+                                    # For workflow application classes
+                                    'CreateChildTasksAction', 
+                                    'RunWorkerAction', 
+                                    'TriggerParentTaskAction',
+                                    'CreateChildTasksActionResponse', 
+                                    'RunWorkerActionResponse',
+                                    'TriggerParentTaskActionResponse',
+                                    'CreateNewTaskActivity',
+                                    'UpdateMatchingTasksActivity',
+                                    'CreateNewTaskActivityResponse', 
+                                    'UpdateMatchingTasksActivityResponse',
+                                    'Fail', 
+                                    'GroupReconciliation', 
+                                    'HealthCheck', 
+                                    'LuminesceView', 
+                                    'SchedulerJob', 
+                                    'Sleep',
+                                    'FailResponse', 
+                                    'GroupReconciliationResponse', 
+                                    'HealthCheckResponse', 
+                                    'LuminesceViewResponse', 
+                                    'SchedulerJobResponse', 
+                                    'SleepResponse']:
+           return value
+        
+        # Only validate the 'type' property of the class
+        if "{{{name}}}" != "type":
+            return value
+
         {{^required}}
         if value is None:
             return value
@@ -60,7 +122,7 @@ class {{classname}}({{#parent}}{{{.}}}{{/parent}}{{^parent}}BaseModel{{/parent}}
         {{/isArray}}
         return value
     {{/isEnum}}
-{{/vars}}
+    {{/vars}}
 
     class Config:
         """Pydantic configuration"""
