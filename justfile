@@ -116,6 +116,7 @@ test-cicd TARGET_DIR:
     echo "{\"api\":{\"personalAccessToken\":\"$FBN_ACCESS_TOKEN\",\"tokenUrl\":\"$FBN_TOKEN_URL\",\"username\":\"$FBN_USERNAME\",\"password\":\"$FBN_PASSWORD\",\"clientId\":\"$FBN_CLIENT_ID\",\"clientSecret\":\"$FBN_CLIENT_SECRET\",\"apiUrl\":\"NOT_USED\"}}" > {{TARGET_DIR}}/sdk/secrets.json
     cp {{TARGET_DIR}}/sdk/secrets.json {{TARGET_DIR}}/sdk/secrets-pat.json
     cd {{TARGET_DIR}}/sdk && poetry install && poetry run pytest test
+    rm {{TARGET_DIR}}/sdk/secrets.json {{TARGET_DIR}}/sdk/secrets-pat.json
 
 test-local-in-docker:
     @just setup-test-local
